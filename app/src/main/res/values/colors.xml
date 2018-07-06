@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="green">#99FF66</color>
+    <color name="yellow">#FFFF33</color>
+
+    <color name="menu_bg">#252525</color>
+    <color name="exit_text">#7c7c7c</color>
+    <color name="selected_img_border">#0d5ccf</color>
+    <color name="delete_bg">#ec3c3c</color>
+
+</resources>
