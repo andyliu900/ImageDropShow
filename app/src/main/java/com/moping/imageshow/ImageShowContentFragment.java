@@ -40,7 +40,6 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
 
     private RecyclerView image_pick_content;
     private View indecator;
-//    private DragHelperItemViewGroup dragItemViewGroup;
     private FrameLayout dragItemViewGroup;
     private View deleteLayout;
 
@@ -94,22 +93,6 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                             null,      // no need to use local data
                             0 );
 
-//                    ImageView selectImageView = (ImageView)view;
-//                    ImageView dragImageView = new ImageView(mContext);
-//                    Bitmap bitmap = ((BitmapDrawable)selectImageView.getDrawable()).getBitmap();
-//                    dragImageView.setImageBitmap(bitmap);
-//
-//                    int[] randomMargins = genLayoutPosition();
-//                    ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(
-//                            selectImageView.getMeasuredWidth(),
-//                            selectImageView.getMeasuredHeight());
-//                    marginParams.setMargins(randomMargins[0], randomMargins[1], 0, 0);
-//
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(marginParams);
-//                    dragImageView.setLayoutParams(layoutParams);
-//
-//                    attachedImageViews.add(dragImageView);
-//                    genAttacthedImageViews();
                 }
             }
         });
@@ -120,68 +103,6 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
 
         dragItemViewGroup = (FrameLayout)view.findViewById(R.id.dragItemViewGroup);
 
-//        dragItemViewGroup = (DragHelperItemViewGroup)view.findViewById(R.id.dragItemViewGroup);
-//        dragItemViewGroup.setOnDraggingListener(new DragHelperItemViewGroup.OnDraggingListener() {
-//            @Override
-//            public void viewCaptured(View captureView) {
-//                if (captureView instanceof ImageView) {
-//                    ImageView captureImageView = (ImageView)captureView;
-//                    if (currentCapturedView == null || !currentCapturedView.equals(captureImageView)) {
-//                        currentCapturedView = captureImageView;
-//
-//                        attachedImageViews.remove(captureImageView);
-//                        attachedImageViews.add(attachedImageViews.size(), currentCapturedView);
-//
-//                        dragItemViewGroup.removeAllViews();
-//                        genAttacthedImageViews();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void clamLeft(int left, int dx) {
-//                leftX = left;
-//                deleteLayout.setVisibility(View.VISIBLE);
-//
-//                View capturedView = dragItemViewGroup.getCapturedView();
-//                if (isMiddlePointInCycle(capturedView)) {
-//                    Vibrator vibrator = (Vibrator)mContext.getSystemService(mContext.VIBRATOR_SERVICE);
-//                    if (vibratorCount == 0) {
-//                        vibrator.vibrate(100);
-//                        vibratorCount++;
-//                    }
-//                } else {
-//                    vibratorCount = 0;
-//                }
-//            }
-//
-//            @Override
-//            public void clamTop(int top, int dy) {
-//                topY = top;
-//                deleteLayout.setVisibility(View.VISIBLE);
-//
-//                View capturedView = dragItemViewGroup.getCapturedView();
-//                if (isMiddlePointInCycle(capturedView)) {
-//                    Vibrator vibrator = (Vibrator)mContext.getSystemService(mContext.VIBRATOR_SERVICE);
-//                    if (vibratorCount == 0) {
-//                        vibrator.vibrate(100);
-//                        vibratorCount++;
-//                    }
-//                } else {
-//                    vibratorCount = 0;
-//                }
-//            }
-//
-//            @Override
-//            public void released(View releasedChild) {
-//                deleteLayout.setVisibility(View.GONE);
-//
-//                if (deleteLayout != null && isMiddlePointInCycle(releasedChild)) {
-//                    attachedImageViews.remove(releasedChild);
-//                    dragItemViewGroup.removeView(releasedChild);
-//                }
-//            }
-//        });
         dragItemViewGroup.setOnDragListener(new ImageListDragDropListener(mContext, new ImageListDragDropListener.OnDragEndCallback(){
 
             @Override

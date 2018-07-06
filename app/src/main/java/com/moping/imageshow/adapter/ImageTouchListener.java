@@ -120,6 +120,10 @@ public class ImageTouchListener implements View.OnTouchListener {
                             parms.bottomMargin = parms.topMargin + (10 * parms.height);
 
                             currentImageView.setLayoutParams(parms);
+
+                            if (mImageDraggingListener != null) {
+                                mImageDraggingListener.clamLeftTop(currentImageView, (int) (x - dx), (int) (y - dy));
+                            }
                         }
                     }
                     break;
