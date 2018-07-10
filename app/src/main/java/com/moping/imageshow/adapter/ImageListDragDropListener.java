@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
@@ -44,7 +45,7 @@ public class ImageListDragDropListener implements View.OnDragListener {
 
                 return true;
             case DragEvent.ACTION_DRAG_LOCATION:
-                Log.i("TAG", "ACTION_DRAG_LOCATION x:" + event.getX() + "  y:" + event.getY());
+//                Log.i("TAG", "ACTION_DRAG_LOCATION x:" + event.getX() + "  y:" + event.getY());
                 return true;
             case DragEvent.ACTION_DRAG_EXITED:
                 v.invalidate();

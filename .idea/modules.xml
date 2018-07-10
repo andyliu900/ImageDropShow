@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/ImageDropShow.iml" filepath="$PROJECT_DIR$/ImageDropShow.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/dragsample/dragsample.iml" filepath="$PROJECT_DIR$/dragsample/dragsample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/matisse/matisse.iml" filepath="$PROJECT_DIR$/matisse/matisse.iml" />
     </modules>
   </component>
 </project>

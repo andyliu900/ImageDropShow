@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,9 +20,12 @@ public class ImageShowAdapter extends RecyclerView.Adapter<ImageShowAdapter.View
     private Context mContext;
     private int currentSelectedPosition = -1;
     private List<String> mImageRes;
-    private ImageLongPressListener mListener;
+    private ImagePullOutListener mListener;
 
-    public ImageShowAdapter(Context context, ImageLongPressListener listener) {
+    // 纵向滚动不触发drag事件
+    private float x, y;
+
+    public ImageShowAdapter(Context context, ImagePullOutListener listener) {
         mContext = context;
         mListener = listener;
     }
@@ -51,19 +55,37 @@ public class ImageShowAdapter extends RecyclerView.Adapter<ImageShowAdapter.View
             holder.imageView.setBackgroundResource(android.R.color.transparent);
         }
         holder.imageView.setImageBitmap(ScreenUtil.decodeSampleBitmapFromFile(mImageRes.get(position),
-                ScreenUtil.px2dp(mContext, 180)));
+                ScreenUtil.dp2px(mContext, 240)));
         holder.imageView.setTag(mImageRes.get(position)); // 设定图片路径
 
-        int[] resultWH = ScreenUtil.calculateZoomWHByFile(mImageRes.get(position), ScreenUtil.px2dp(mContext, 180));
+        int[] resultWH = ScreenUtil.calculateZoomWHByFile(mImageRes.get(position), ScreenUtil.dp2px(mContext, 220));
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(resultWH[0], resultWH[1]);
         layoutParams.gravity = Gravity.CENTER;
         holder.imageView.setLayoutParams(layoutParams);
 
-        holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onLongClick(View view) {
-                if (mListener != null) {
-                    mListener.onImageLongPress(position, view);
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_DOWN:
+                        x = event.getX();
+                        y = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        float dx = event.getX();
+                        float dy = event.getY();
+
+                        float absX = Math.abs(dx - x);
+                        float absY = Math.abs(dy - y);
+
+                        if (absY == 0 || (absX / absY) >= 1) {
+                            if (mListener != null) {
+                                mListener.onImagePullOut(position, view);
+                            }
+                        } else {
+                            return false;
+                        }
+                        break;
                 }
                 return true;
             }

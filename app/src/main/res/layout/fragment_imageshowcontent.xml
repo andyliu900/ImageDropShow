@@ -5,6 +5,14 @@
     android:background="@mipmap/content_bg"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/moping_logo"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"/>
+
     <RelativeLayout
         android:id="@+id/delete_layout"
         android:layout_width="wrap_content"
@@ -36,18 +44,40 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/image_pick_content"
+        <RelativeLayout
+            android:id="@+id/image_pick_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@drawable/image_pick_bg" />
+            android:background="@drawable/image_pick_bg">
+
+            <FrameLayout
+                android:id="@+id/addimage_btn"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_alignParentBottom="true"
+                android:background="@mipmap/icon_addimage_bg"
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_addimage_add"/>
+            </FrameLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/image_pick_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/addimage_btn" />
+
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/indecator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/image_pick_content"
+            android:layout_toRightOf="@id/image_pick_layout"
             android:src="@mipmap/indecator" />
     </RelativeLayout>
 

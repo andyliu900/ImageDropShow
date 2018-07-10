@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
@@ -232,11 +233,10 @@ public class ScreenUtil {
 
         int width = options.outWidth;
         int height = options.outHeight;
-        int zoomSize = width / reqWidth;
         options.inJustDecodeBounds = false;
 
-        int resultWidth = width / zoomSize;
-        int resultHeight = height / zoomSize;
+        int resultWidth = reqWidth;
+        int resultHeight = reqWidth * height / width;
 
         return new int[]{resultWidth, resultHeight};
     }

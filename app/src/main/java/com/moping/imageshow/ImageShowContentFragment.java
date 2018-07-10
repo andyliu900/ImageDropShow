@@ -4,6 +4,9 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
@@ -19,31 +22,44 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.moping.imageshow.adapter.ImageDraggingListener;
 import com.moping.imageshow.adapter.ImageListDragDropListener;
-import com.moping.imageshow.adapter.ImageLongPressListener;
+import com.moping.imageshow.adapter.ImagePullOutListener;
 import com.moping.imageshow.adapter.ImageShowAdapter;
 import com.moping.imageshow.adapter.ImageTouchListener;
 import com.moping.imageshow.base.BaseFragment;
 import com.moping.imageshow.util.Constant;
+import com.moping.imageshow.util.FileUtil;
 import com.moping.imageshow.util.ScreenUtil;
 import com.moping.imageshow.util.SharedPreferencesUtils;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageShowContentFragment extends BaseFragment implements View.OnClickListener{
+import static android.app.Activity.RESULT_OK;
 
+public class ImageShowContentFragment extends BaseFragment implements View.OnClickListener {
+
+
+    private static final int REQUEST_CODE_CHOOSE = 101;
     private static final String imagePath = Environment.getExternalStorageDirectory().getPath() + Constant.ROOT_FILE_PATH + Constant.IMAGE_PATH;
 
-    private RecyclerView image_pick_content;
+    private ViewGroup image_pick_layout;
+    private RecyclerView image_pick_list;
+    private View addimage_btn;
     private View indecator;
-    private FrameLayout dragItemViewGroup;
+//    private DragHelperItemViewGroup dragItemViewGroup;
+        private FrameLayout dragItemViewGroup;
     private View deleteLayout;
 
     private ImageShowAdapter adapter;
+    private List<Uri> mSelected;
 
     private ImageView currentCapturedView;
     private List<ImageView> attachedImageViews = new ArrayList();
@@ -68,20 +84,38 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_imageshowcontent, null);
 
-        image_pick_content = (RecyclerView) view.findViewById(R.id.image_pick_content);
-        image_pick_content.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+        image_pick_layout = (RelativeLayout)view.findViewById(R.id.image_pick_layout);
+        image_pick_layout.setOnClickListener(null);
+        image_pick_list = (RecyclerView) view.findViewById(R.id.image_pick_list);
+        image_pick_list.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         DividerItemDecoration divider = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.listdevider_bg));
-        image_pick_content.addItemDecoration(divider);
-
-        adapter = new ImageShowAdapter(mContext, new ImageLongPressListener() {
+        image_pick_list.addItemDecoration(divider);
+        addimage_btn = view.findViewById(R.id.addimage_btn);
+        addimage_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onImageLongPress(int position, View view) {
+            public void onClick(View v) {
+                Matisse.from(ImageShowContentFragment.this)
+                        .choose(MimeType.ofImage()) // 选择 mime 的类型
+                        .countable(true)
+                        .maxSelectable(9) // 图片选择的最多数量
+                        .theme(R.style.Matisse_Dracula)
+//                        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                        .thumbnailScale(0.85f) // 缩略图的比例
+                        .imageEngine(new GlideEngine()) // 使用的图片加载引擎
+                        .forResult(REQUEST_CODE_CHOOSE); // 设置作为标记的请求码
+            }
+        });
+
+        adapter = new ImageShowAdapter(mContext, new ImagePullOutListener() {
+            @Override
+            public void onImagePullOut(int position, View view) {
                 if (view instanceof ImageView) {
                     adapter.setCurrentSelectedPosition(position);
                     adapter.notifyDataSetChanged();
 
-                    ImageView selectImageView = (ImageView)view;
+                    ImageView selectImageView = (ImageView) view;
                     selectImageView.setOnDragListener(new ImageListDragDropListener(mContext));
 
                     ClipData.Item item = new ClipData.Item(view.getTag().toString());
@@ -91,19 +125,27 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                     view.startDrag(dragData,  // the data to be dragged
                             myShadow,  // the drag shadow builder
                             null,      // no need to use local data
-                            0 );
+                            0);
 
                 }
             }
         });
-        image_pick_content.setAdapter(adapter);
+        image_pick_list.setAdapter(adapter);
 
         indecator = view.findViewById(R.id.indecator);
         indecator.setOnClickListener(this);
 
-        dragItemViewGroup = (FrameLayout)view.findViewById(R.id.dragItemViewGroup);
+        dragItemViewGroup = (FrameLayout) view.findViewById(R.id.dragItemViewGroup);
+        dragItemViewGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentToggleState == ToggleState.OPENED && currentToggleState != ToggleState.ACTIONING) {
+                    hideImagePickLayout();
+                }
+            }
+        });
 
-        dragItemViewGroup.setOnDragListener(new ImageListDragDropListener(mContext, new ImageListDragDropListener.OnDragEndCallback(){
+        dragItemViewGroup.setOnDragListener(new ImageListDragDropListener(mContext, new ImageListDragDropListener.OnDragEndCallback() {
 
             @Override
             public void dragEnd(ImageView dragView) {
@@ -156,6 +198,67 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
             }
         }));
 
+//        dragItemViewGroup.setOnDraggingListener(new DragHelperItemViewGroup.OnDraggingListener() {
+//            @Override
+//            public void viewCaptured(View captureView) {
+//                if (captureView instanceof ImageView) {
+//                    ImageView captureImageView = (ImageView) captureView;
+//                    if (currentCapturedView == null || !currentCapturedView.equals(captureImageView)) {
+//                        currentCapturedView = captureImageView;
+//                        currentCapturedView.setOnTouchListener(new ImageTouchListener());
+//
+//                        attachedImageViews.remove(captureImageView);
+//                        attachedImageViews.add(attachedImageViews.size(), currentCapturedView);
+//
+//                        dragItemViewGroup.removeAllViews();
+//                        genAttacthedImageViews();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void clamLeft(View captureView, int left, int dx) {
+//                leftX = left;
+//                deleteLayout.setVisibility(View.VISIBLE);
+//
+//                if (isMiddlePointInCycle(captureView)) {
+//                    Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
+//                    if (vibratorCount == 0) {
+//                        vibrator.vibrate(100);
+//                        vibratorCount++;
+//                    }
+//                } else {
+//                    vibratorCount = 0;
+//                }
+//            }
+//
+//            @Override
+//            public void clamTop(View captureView, int top, int dy) {
+//                topY = top;
+//                deleteLayout.setVisibility(View.VISIBLE);
+//
+//                if (isMiddlePointInCycle(captureView)) {
+//                    Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
+//                    if (vibratorCount == 0) {
+//                        vibrator.vibrate(100);
+//                        vibratorCount++;
+//                    }
+//                } else {
+//                    vibratorCount = 0;
+//                }
+//            }
+//
+//            @Override
+//            public void released(View releasedChild) {
+//                deleteLayout.setVisibility(View.GONE);
+//
+//                if (deleteLayout != null && isMiddlePointInCycle(releasedChild)) {
+//                    attachedImageViews.remove(releasedChild);
+//                    dragItemViewGroup.removeView(releasedChild);
+//                }
+//            }
+//        });
+
         deleteLayout = view.findViewById(R.id.delete_layout);
 
         return view;
@@ -171,6 +274,24 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
     @Override
     public void onClick(View view) {
         doActionImagePickLayout(currentFolderId);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+            mSelected = Matisse.obtainResult(data);
+
+            List<String> extendImages = new ArrayList();
+            for (Uri uri : mSelected) {
+                String path = FileUtil.getRealPathFromUri(mContext, uri);
+                extendImages.add(path);
+            }
+
+            imagePathList.addAll(extendImages);
+            adapter.setImageRes(imagePathList);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void initCurrentFolderId(int folderId) {
@@ -197,8 +318,8 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
     }
 
     private void showImagePickLayout(final int folderId) {
-        if ((boolean)SharedPreferencesUtils.getParam(mContext, Constant.PICKIMAGE_TIPS_KEY, true)) {
-            Snackbar.make(dragItemViewGroup, "长按图片进行拖动", Snackbar.LENGTH_LONG)
+        if ((boolean) SharedPreferencesUtils.getParam(mContext, Constant.PICKIMAGE_TIPS_KEY, true)) {
+            Snackbar.make(dragItemViewGroup, "拖动图片到空白区域", Snackbar.LENGTH_LONG)
                     .setAction("知道了", new View.OnClickListener() {
 
                         @Override
@@ -207,16 +328,16 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                         }
                     }).show();
         }
-        if (image_pick_content != null) {
+        if (image_pick_layout != null) {
             ValueAnimator animator = ValueAnimator.ofInt(0, ScreenUtil.dp2px(mContext, 240));
             animator.setDuration(500);
             animator.setRepeatCount(0);
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    int currentValue = (Integer)valueAnimator.getAnimatedValue();
-                    image_pick_content.getLayoutParams().width = currentValue;
-                    image_pick_content.requestLayout();
+                    int currentValue = (Integer) valueAnimator.getAnimatedValue();
+                    image_pick_layout.getLayoutParams().width = currentValue;
+                    image_pick_layout.requestLayout();
                 }
             });
             animator.addListener(new Animator.AnimatorListener() {
@@ -247,16 +368,16 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
     }
 
     private void hideImagePickLayout() {
-        if (image_pick_content != null) {
+        if (image_pick_layout != null) {
             ValueAnimator animator = ValueAnimator.ofInt(ScreenUtil.dp2px(mContext, 240), 0);
             animator.setDuration(500);
             animator.setRepeatCount(0);
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    int currentValue = (Integer)valueAnimator.getAnimatedValue();
-                    image_pick_content.getLayoutParams().width = currentValue;
-                    image_pick_content.requestLayout();
+                    int currentValue = (Integer) valueAnimator.getAnimatedValue();
+                    image_pick_layout.getLayoutParams().width = currentValue;
+                    image_pick_layout.requestLayout();
                 }
             });
             animator.addListener(new Animator.AnimatorListener() {

@@ -45,7 +45,7 @@ public class DragHelperItemViewGroup extends FrameLayout {
             @Override
             public int clampViewPositionHorizontal(@NonNull View child, int left, int dx) {
                 if (mListener != null) {
-                    mListener.clamLeft(left, dx);
+                    mListener.clamLeft(child, left, dx);
                 }
                 return left;
             }
@@ -53,7 +53,7 @@ public class DragHelperItemViewGroup extends FrameLayout {
             @Override
             public int clampViewPositionVertical(@NonNull View child, int top, int dy) {
                 if (mListener != null) {
-                    mListener.clamTop(top, dy);
+                    mListener.clamTop(child, top, dy);
                 }
                 return top;
             }
@@ -126,8 +126,8 @@ public class DragHelperItemViewGroup extends FrameLayout {
 
     public interface OnDraggingListener {
         void viewCaptured(View captureView);
-        void clamLeft(int left, int dx);
-        void clamTop(int top, int dy);
+        void clamLeft(View captureView, int left, int dx);
+        void clamTop(View captureView, int top, int dy);
         void released(View releasedChild);
     }
 }

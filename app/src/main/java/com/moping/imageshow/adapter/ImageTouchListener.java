@@ -29,6 +29,10 @@ public class ImageTouchListener implements View.OnTouchListener {
     float dx = 0, dy = 0, x = 0, y = 0;
     float angle = 0;
 
+    public ImageTouchListener() {
+
+    }
+
     public ImageTouchListener(ImageDraggingListener listener) {
         mImageDraggingListener = listener;
     }
