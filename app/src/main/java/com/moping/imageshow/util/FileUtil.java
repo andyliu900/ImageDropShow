@@ -9,6 +9,11 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 /**
  * 文件处理工具类
  */
@@ -81,6 +86,49 @@ public class FileUtil {
             cursor.close();
         }
         return filePath;
+    }
+
+    /**
+     * 文件复制方法
+     *
+     * @param source
+     * @param target
+     */
+    public static void copyFile(String source, String target) {
+        FileChannel input = null;
+        FileChannel output = null;
+
+        try {
+            input = new FileInputStream(source).getChannel();
+            output = new FileOutputStream(target).getChannel();
+            /**
+             * Transfers bytes into this channel's file from the given readable byte channel.
+             *  @param  src
+             *         The source channel
+             *
+             * @param  position
+             *         The position within the file at which the transfer is to begin;
+             *         must be non-negative
+             *
+             * @param  count
+             *         The maximum number of bytes to be transferred; must be
+             *         non-negative
+             */
+            output.transferFrom(input, 0, input.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+                if (output != null) {
+                    output.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

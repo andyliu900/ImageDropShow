@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
     <color name="green">#99FF66</color>
     <color name="yellow">#FFFF33</color>
 
@@ -12,5 +13,12 @@
     <color name="exit_text">#7c7c7c</color>
     <color name="selected_img_border">#0d5ccf</color>
     <color name="delete_bg">#ec3c3c</color>
+
+    <color name="linedevider_bg">#303030</color>
+    <color name="header_tv">#3c3c3c</color>
+    <color name="header_bg">#f2f2f2</color>
+    <color name="header_border_bg">#e1e1e1</color>
+    <color name="btn_highlight_bg">#74b94a</color>
+    <color name="btn_highlight_press_bg">#498a22</color>
 
 </resources>

@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import com.moping.imageshow.util.Constant;
 import com.moping.imageshow.util.FileUtil;
 import com.moping.imageshow.util.ScreenUtil;
 import com.moping.imageshow.util.SharedPreferencesUtils;
+import com.moping.imageshow.view.dispatchview.DispatchImageView;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -46,7 +48,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class ImageShowContentFragment extends BaseFragment implements View.OnClickListener {
 
-
+    public static final String RESET_IMAGEINDEX = "resetImageIndexBg";
     private static final int REQUEST_CODE_CHOOSE = 101;
     private static final String imagePath = Environment.getExternalStorageDirectory().getPath() + Constant.ROOT_FILE_PATH + Constant.IMAGE_PATH;
 
@@ -61,8 +63,8 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
     private ImageShowAdapter adapter;
     private List<Uri> mSelected;
 
-    private ImageView currentCapturedView;
-    private List<ImageView> attachedImageViews = new ArrayList();
+    private DispatchImageView currentCapturedView;
+    private List<DispatchImageView> attachedImageViews = new ArrayList();
 
     enum ToggleState {
         OPENED, // 已经打开面板
@@ -148,12 +150,12 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
         dragItemViewGroup.setOnDragListener(new ImageListDragDropListener(mContext, new ImageListDragDropListener.OnDragEndCallback() {
 
             @Override
-            public void dragEnd(ImageView dragView) {
+            public void dragEnd(DispatchImageView dragView) {
                 dragView.setOnTouchListener(new ImageTouchListener(new ImageDraggingListener() {
                     @Override
                     public void viewCaptured(View captureView) {
-                        if (captureView instanceof ImageView) {
-                            ImageView captureImageView = (ImageView)captureView;
+                        if (captureView instanceof DispatchImageView) {
+                            DispatchImageView captureImageView = (DispatchImageView)captureView;
                             if (currentCapturedView == null || !currentCapturedView.equals(captureImageView)) {
                                 currentCapturedView = captureImageView;
 
@@ -161,7 +163,7 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                                 attachedImageViews.add(attachedImageViews.size(), currentCapturedView);
 
                                 dragItemViewGroup.removeAllViews();
-                                genAttacthedImageViews();
+                                genAttacthedImageViews(false);
                             }
                         }
                     }
@@ -170,6 +172,7 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                     public void clamLeftTop(View captureView, int left, int top) {
                         leftX = left;
                         topY = top;
+                        Log.i("XXX", "leftX:" + leftX + "   topY:" + topY);
                         deleteLayout.setVisibility(View.VISIBLE);
 
                         if (isMiddlePointInCycle(captureView)) {
@@ -184,8 +187,13 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                     }
 
                     @Override
-                    public void released(View releasedChild) {
+                    public void released(View releasedChild, float totalAngle, ResetCallBack callBack) {
                         deleteLayout.setVisibility(View.GONE);
+
+                        if (releasedChild instanceof DispatchImageView) {
+                            DispatchImageView captureImageView = (DispatchImageView) releasedChild;
+                            captureImageView.setRotate(totalAngle, callBack);
+                        }
 
                         if (deleteLayout != null && isMiddlePointInCycle(releasedChild)) {
                             attachedImageViews.remove(releasedChild);
@@ -193,71 +201,12 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                         }
                     }
                 }));
+
+                currentCapturedView = dragView;
                 attachedImageViews.add(dragView);
-                genAttacthedImageViews();
+                genAttacthedImageViews(true);
             }
         }));
-
-//        dragItemViewGroup.setOnDraggingListener(new DragHelperItemViewGroup.OnDraggingListener() {
-//            @Override
-//            public void viewCaptured(View captureView) {
-//                if (captureView instanceof ImageView) {
-//                    ImageView captureImageView = (ImageView) captureView;
-//                    if (currentCapturedView == null || !currentCapturedView.equals(captureImageView)) {
-//                        currentCapturedView = captureImageView;
-//                        currentCapturedView.setOnTouchListener(new ImageTouchListener());
-//
-//                        attachedImageViews.remove(captureImageView);
-//                        attachedImageViews.add(attachedImageViews.size(), currentCapturedView);
-//
-//                        dragItemViewGroup.removeAllViews();
-//                        genAttacthedImageViews();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void clamLeft(View captureView, int left, int dx) {
-//                leftX = left;
-//                deleteLayout.setVisibility(View.VISIBLE);
-//
-//                if (isMiddlePointInCycle(captureView)) {
-//                    Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
-//                    if (vibratorCount == 0) {
-//                        vibrator.vibrate(100);
-//                        vibratorCount++;
-//                    }
-//                } else {
-//                    vibratorCount = 0;
-//                }
-//            }
-//
-//            @Override
-//            public void clamTop(View captureView, int top, int dy) {
-//                topY = top;
-//                deleteLayout.setVisibility(View.VISIBLE);
-//
-//                if (isMiddlePointInCycle(captureView)) {
-//                    Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
-//                    if (vibratorCount == 0) {
-//                        vibrator.vibrate(100);
-//                        vibratorCount++;
-//                    }
-//                } else {
-//                    vibratorCount = 0;
-//                }
-//            }
-//
-//            @Override
-//            public void released(View releasedChild) {
-//                deleteLayout.setVisibility(View.GONE);
-//
-//                if (deleteLayout != null && isMiddlePointInCycle(releasedChild)) {
-//                    attachedImageViews.remove(releasedChild);
-//                    dragItemViewGroup.removeView(releasedChild);
-//                }
-//            }
-//        });
 
         deleteLayout = view.findViewById(R.id.delete_layout);
 
@@ -291,6 +240,30 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
             imagePathList.addAll(extendImages);
             adapter.setImageRes(imagePathList);
             adapter.notifyDataSetChanged();
+
+            // 将图片复制到指定文件夹
+            for (String path : extendImages) {
+                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+                String folderPath = null;
+                String target = null;
+                if (currentFolderId == 1) {
+                    folderPath = imagePath + Constant.IMAGE_FOLDER_ONE;
+                } else if (currentFolderId == 2) {
+                    folderPath = imagePath + Constant.IMAGE_FOLDER_TWO;
+                } else if (currentFolderId == 3) {
+                    folderPath = imagePath + Constant.IMAGE_FOLDER_THREE;
+                } else if (currentFolderId == 4) {
+                    folderPath = imagePath + Constant.IMAGE_FOLDER_FOUR;
+                } else if (currentFolderId == 5) {
+                    folderPath = imagePath + Constant.IMAGE_FOLDER_FIVE;
+                } else if (currentFolderId == 6) {
+                    folderPath = imagePath + Constant.IMAGE_FOLDER_SIX;
+                } else {
+                    folderPath = imagePath + Constant.IMAGE_FOLDER_ONE;
+                }
+                target = folderPath + File.separator + fileName;
+                FileUtil.copyFile(path, target);
+            }
         }
     }
 
@@ -390,7 +363,11 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                 public void onAnimationEnd(Animator animator) {
                     currentToggleState = ToggleState.CLOSED;
                     adapter.setCurrentSelectedPosition(-1);
+                    imagePathList.clear();
+                    adapter.setImageRes(imagePathList);
                     adapter.notifyDataSetChanged();
+
+                    mFunctionManager.invokeFunc(RESET_IMAGEINDEX);
                 }
 
                 @Override
@@ -507,11 +484,24 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
         return false;
     }
 
-    private void genAttacthedImageViews() {
+    private void genAttacthedImageViews(boolean isDrop) {
         if (attachedImageViews != null) {
-            for (ImageView imageView : attachedImageViews) {
-                if (imageView.getParent() == null && dragItemViewGroup != null) {
-                    dragItemViewGroup.addView(imageView);
+            for (DispatchImageView imageView : attachedImageViews) {
+                if (isDrop) {
+                    if (imageView.equals(currentCapturedView)) {
+                        imageView.setViewInFront(true);
+                    } else {
+                        imageView.setViewInFront(false);
+                    }
+                } else {
+                    if (imageView.getParent() == null && dragItemViewGroup != null) {
+                        if (imageView.equals(currentCapturedView)) {
+                            imageView.setViewInFront(true);
+                        } else {
+                            imageView.setViewInFront(false);
+                        }
+                        dragItemViewGroup.addView(imageView);
+                    }
                 }
             }
         }

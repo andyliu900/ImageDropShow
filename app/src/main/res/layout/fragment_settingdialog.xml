@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="20dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="文件夹（设置）"
+        android:textSize="22sp"
+        android:textColor="@color/header_tv"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/linedevider_bg"
+        android:layout_marginTop="17dp"/>
+
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="26dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="30%"
+            android:gravity="center"
+            android:text="当前文件夹名称"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/header_left_bg"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="70%"
+            android:gravity="center"
+            android:text="修改后名称"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/header_right_bg"/>
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/folder_one_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="30%"
+            android:gravity="center"
+            android:text="文件夹1"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/table_left_bg"/>
+
+        <EditText
+            android:id="@+id/folder_one_et"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="70%"
+            android:gravity="center"
+            android:maxLines="1"
+            android:hint="点击修改名称"
+            android:textColor="@color/btn_highlight_bg"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/table_right_bg"/>
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/folder_two_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="30%"
+            android:gravity="center"
+            android:text="文件夹2"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/table_left_bg"/>
+
+        <EditText
+            android:id="@+id/folder_two_et"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="70%"
+            android:gravity="center"
+            android:maxLines="1"
+            android:hint="点击修改名称"
+            android:textColor="@color/btn_highlight_bg"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/table_right_bg"/>
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/folder_three_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="30%"
+            android:gravity="center"
+            android:text="文件夹3"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/table_left_bg"/>
+
+        <EditText
+            android:id="@+id/folder_three_et"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="70%"
+            android:gravity="center"
+            android:maxLines="1"
+            android:hint="点击修改名称"
+            android:textColor="@color/btn_highlight_bg"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/table_right_bg"/>
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/folder_four_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="30%"
+            android:gravity="center"
+            android:text="文件夹4"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/table_left_bg"/>
+
+        <EditText
+            android:id="@+id/folder_four_et"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="70%"
+            android:gravity="center"
+            android:maxLines="1"
+            android:hint="点击修改名称"
+            android:textColor="@color/btn_highlight_bg"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/table_right_bg"/>
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/folder_five_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="30%"
+            android:gravity="center"
+            android:text="文件夹5"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/table_left_bg"/>
+
+        <EditText
+            android:id="@+id/folder_five_et"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="70%"
+            android:gravity="center"
+            android:maxLines="1"
+            android:hint="点击修改名称"
+            android:textColor="@color/btn_highlight_bg"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/table_right_bg"/>
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/folder_six_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="30%"
+            android:gravity="center"
+            android:text="文件夹6"
+            android:textColor="@color/header_tv"
+            android:textSize="15sp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/table_left_bg"/>
+
+        <EditText
+            android:id="@+id/folder_six_et"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="100%"
+            app:layout_widthPercent="70%"
+            android:gravity="center"
+            android:maxLines="1"
+            android:hint="点击修改名称"
+            android:textColor="@color/btn_highlight_bg"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/table_right_bg"/>
+
+    </android.support.percent.PercentRelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="26dp"
+        android:layout_gravity="right">
+        
+        <Button
+            android:id="@+id/savebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="保存"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_highlight_bg"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <Button
+            android:id="@+id/canclebtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="取消"
+            android:textSize="17sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@drawable/btn_text_bg"
+            android:background="@drawable/btn_normal_bg"
+            style="?android:attr/borderlessButtonStyle"/>
+
+    </LinearLayout>
+
+</LinearLayout>

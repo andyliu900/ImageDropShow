@@ -6,6 +6,10 @@ public interface ImageDraggingListener {
 
     void viewCaptured(View captureView);
     void clamLeftTop(View captureView, int left, int top);
-    void released(View releasedChild);
+    void released(View releasedChild, float totalAngle, ResetCallBack callBack);
+
+    public interface ResetCallBack {
+        void resetTotalAngle();
+    }
 
 }

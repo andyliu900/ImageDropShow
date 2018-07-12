@@ -7,7 +7,11 @@ import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.moping.imageshow.view.dispatchview.DispatchImageView;
+
 /**
+ * 顺时针旋转为正方向
+ *
  * 图片的Touch事件，只处理缩放、旋转
  */
 public class ImageTouchListener implements View.OnTouchListener {
@@ -28,6 +32,7 @@ public class ImageTouchListener implements View.OnTouchListener {
     int startheight;
     float dx = 0, dy = 0, x = 0, y = 0;
     float angle = 0;
+    float totalAngle = 0.0f;
 
     public ImageTouchListener() {
 
@@ -40,13 +45,14 @@ public class ImageTouchListener implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        if (v instanceof ImageView) {
-            ImageView currentImageView = (ImageView)v;
+        if (v instanceof DispatchImageView) {
+            DispatchImageView currentDispatchImageView = (DispatchImageView)v;
+            ImageView currentImageView = currentDispatchImageView.getImage();
             ((BitmapDrawable)currentImageView.getDrawable()).setAntiAlias(true);
 
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
-                    parms = (FrameLayout.LayoutParams) currentImageView.getLayoutParams();
+                    parms = (FrameLayout.LayoutParams) currentDispatchImageView.getLayoutParams();
                     startwidth = parms.width;
                     startheight = parms.height;
                     dx = event.getRawX() - parms.leftMargin;
@@ -55,7 +61,7 @@ public class ImageTouchListener implements View.OnTouchListener {
                     mode = DRAG;
 
                     if (mImageDraggingListener != null) {
-                        mImageDraggingListener.viewCaptured(currentImageView);
+                        mImageDraggingListener.viewCaptured(currentDispatchImageView);
                     }
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
@@ -83,10 +89,10 @@ public class ImageTouchListener implements View.OnTouchListener {
                         parms.rightMargin = parms.leftMargin + (5 * parms.width);
                         parms.bottomMargin = parms.topMargin + (10 * parms.height);
 
-                        currentImageView.setLayoutParams(parms);
+                        currentDispatchImageView.setLayoutParams(parms);
 
                         if (mImageDraggingListener != null) {
-                            mImageDraggingListener.clamLeftTop(currentImageView, (int) (x - dx), (int) (y - dy));
+                            mImageDraggingListener.clamLeftTop(currentDispatchImageView, (int) (x - dx), (int) (y - dy));
                         }
 
                     } else if (mode == ZOOM) {
@@ -95,22 +101,22 @@ public class ImageTouchListener implements View.OnTouchListener {
                             newRot = rotation(event);
                             float r = newRot - d;
                             angle = r;
+                            totalAngle += angle;
 
                             x = event.getRawX();
                             y = event.getRawY();
 
                             float newDist = spacing(event);
                             if (newDist > 10f) {
-                                float scale = newDist / oldDist * currentImageView.getScaleX();
+                                float scale = newDist / oldDist * currentDispatchImageView.getScaleX();
                                 if (scale > 0.6) {
                                     scalediff = scale;
-                                    currentImageView.setScaleX(scale);
-                                    currentImageView.setScaleY(scale);
-
+                                    currentDispatchImageView.setScaleX(scale);
+                                    currentDispatchImageView.setScaleY(scale);
                                 }
                             }
 
-                            currentImageView.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
+                            currentDispatchImageView.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
 
                             x = event.getRawX();
                             y = event.getRawY();
@@ -123,17 +129,22 @@ public class ImageTouchListener implements View.OnTouchListener {
                             parms.rightMargin = parms.leftMargin + (5 * parms.width);
                             parms.bottomMargin = parms.topMargin + (10 * parms.height);
 
-                            currentImageView.setLayoutParams(parms);
+                            currentDispatchImageView.setLayoutParams(parms);
 
                             if (mImageDraggingListener != null) {
-                                mImageDraggingListener.clamLeftTop(currentImageView, (int) (x - dx), (int) (y - dy));
+                                mImageDraggingListener.clamLeftTop(currentDispatchImageView, (int) (x - dx), (int) (y - dy));
                             }
                         }
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                     if (mImageDraggingListener != null) {
-                        mImageDraggingListener.released(currentImageView);
+                        mImageDraggingListener.released(currentDispatchImageView, totalAngle, new ImageDraggingListener.ResetCallBack() {
+                            @Override
+                            public void resetTotalAngle() {
+                                totalAngle = 0.0f;
+                            }
+                        });
                     }
                     break;
                     default:

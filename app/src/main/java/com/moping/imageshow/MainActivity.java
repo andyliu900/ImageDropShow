@@ -4,11 +4,15 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
 
+import com.moping.imageshow.base.BaseDialogFragment;
 import com.moping.imageshow.base.BaseFragment;
 import com.moping.imageshow.func.FunctionManager;
 import com.moping.imageshow.func.FunctionNoParamNoResult;
@@ -19,10 +23,14 @@ public class MainActivity extends AppCompatActivity {
     private FolderIndexFragment folderIndexFragment;
     private ImageShowContentFragment imageShowContentFragment;
 
+    private FrameLayout imageShowContentLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        imageShowContentLayout = (FrameLayout) findViewById(R.id.imageShowContentFragment);
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -54,27 +62,61 @@ public class MainActivity extends AppCompatActivity {
      */
     public void setFunctionsForFragment(String tag) {
         FragmentManager fm = getSupportFragmentManager();
-        BaseFragment fragment = (BaseFragment)fm.findFragmentByTag(tag);
         FunctionManager functionManager = FunctionManager.getInstance();
-        fragment.setFunctionManager(functionManager.addFunction(new FunctionWithParamOnly<Integer>(FolderIndexFragment.FUNCTION_NAME_GETPICLIST) {
-            @Override
-            public void function(Integer integer) {
-                if (imageShowContentFragment != null) {
-                    //接口中的方法回调
-                    imageShowContentFragment.doActionImagePickLayout(integer);
+        Fragment baseFragment = fm.findFragmentByTag(tag);
+        if (baseFragment instanceof BaseFragment) {
+            BaseFragment fragment = (BaseFragment)baseFragment;
+            fragment.setFunctionManager(functionManager.addFunction(new FunctionWithParamOnly<Integer>(FolderIndexFragment.FUNCTION_NAME_GETPICLIST) {
+                @Override
+                public void function(Integer integer) {
+                    if (imageShowContentFragment != null) {
+                        //接口中的方法回调
+                        imageShowContentFragment.doActionImagePickLayout(integer);
+                    }
                 }
-            }
-        }).addFunction(new FunctionNoParamNoResult(FolderIndexFragment.FUNCTION_NAME_EXIT) {
-            @Override
-            public void function() {
-                showExitDialog();
-            }
-        }));
+            }).addFunction(new FunctionNoParamNoResult(FolderIndexFragment.FUNCTION_NAME_EXIT) {
+                @Override
+                public void function() {
+                    showExitDialog();
+                }
+            }).addFunction(new FunctionNoParamNoResult(FolderIndexFragment.FUNCTION_NAME_SETTING) {
+                @Override
+                public void function() {
+                    showSettingDialog();
+                }
+            }).addFunction(new FunctionNoParamNoResult(ImageShowContentFragment.RESET_IMAGEINDEX) {
+                @Override
+                public void function() {
+                    if (folderIndexFragment != null) {
+                        folderIndexFragment.resetImageIndexBg();
+                    }
+                }
+            }));
+        } else if (baseFragment instanceof BaseDialogFragment) {
+            BaseDialogFragment fragment = (BaseDialogFragment)baseFragment;
+            fragment.setFunctionManager(functionManager.addFunction(new FunctionNoParamNoResult(SettingDialogFragment.FUNCTION_SAVEFOLDERNAME_EXIT) {
+                @Override
+                public void function() {
+                    Snackbar.make(imageShowContentLayout, "修改文件夹成功", Snackbar.LENGTH_LONG).show();
+                    if (folderIndexFragment != null) {
+                        folderIndexFragment.updateFolderNames();
+                    }
+                }
+            }));
+        }
+
     }
 
     @Override
     public void onBackPressed() {
         showExitDialog();
+    }
+
+    private void showSettingDialog() {
+        SettingDialogFragment settingDialogFragment = new SettingDialogFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        settingDialogFragment.show(ft, "settingDialogFragment");
     }
 
     private void showExitDialog() {

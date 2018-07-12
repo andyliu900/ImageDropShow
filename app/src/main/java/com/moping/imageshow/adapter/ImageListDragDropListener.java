@@ -4,15 +4,16 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.moping.imageshow.util.ScreenUtil;
+import com.moping.imageshow.view.dispatchview.DispatchImageView;
 
 public class ImageListDragDropListener implements View.OnDragListener {
 
@@ -59,24 +60,34 @@ public class ImageListDragDropListener implements View.OnDragListener {
 
                 if(v instanceof FrameLayout){
 
-                    ImageView dragImageView = new ImageView(mContext);
-                    Bitmap bitmap = ScreenUtil.decodeSampleBitmapFromFile(dragData, ScreenUtil.getScreenWidth(mContext) / 4);
-                    dragImageView.setImageBitmap(bitmap);
-
                     int[] resultWH = ScreenUtil.calculateZoomWHByFile(dragData, ScreenUtil.getScreenWidth(mContext) / 4);
 
-                    ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(
+                    DispatchImageView dispatchImageView = new DispatchImageView(mContext);
+
+                    ViewGroup.MarginLayoutParams imageMarginParams = new ViewGroup.MarginLayoutParams(
                             resultWH[0],
                             resultWH[1]);
+                    imageMarginParams.setMargins(ScreenUtil.dp2px(mContext, 30), ScreenUtil.dp2px(mContext, 30),
+                            ScreenUtil.dp2px(mContext, 30), ScreenUtil.dp2px(mContext, 30));
+
+                    RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(imageMarginParams);
+                    dispatchImageView.setImageLayoutParams(imageLayoutParams);
+
+                    Bitmap bitmap = BitmapFactory.decodeFile(dragData);
+                    dispatchImageView.setImage(bitmap);
+
+                    ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(
+                            resultWH[0] + ScreenUtil.dp2px(mContext, 30),
+                            resultWH[1] + ScreenUtil.dp2px(mContext, 30));
                     marginParams.setMargins((int)event.getX() - resultWH[0] / 2, (int)event.getY() - resultWH[1] / 2, 0, 0);
 
                     FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(marginParams);
-                    dragImageView.setLayoutParams(layoutParams);
+                    dispatchImageView.setLayoutParams(layoutParams);
 
-                    ((FrameLayout)v).addView(dragImageView);
+                    ((FrameLayout)v).addView(dispatchImageView);
 
                     if (mOnDragEndCallback != null) {
-                        mOnDragEndCallback.dragEnd(dragImageView);
+                        mOnDragEndCallback.dragEnd(dispatchImageView);
                     }
                 }
 
@@ -99,7 +110,7 @@ public class ImageListDragDropListener implements View.OnDragListener {
     }
 
     public interface OnDragEndCallback {
-        void dragEnd(ImageView dragView);
+        void dragEnd(DispatchImageView dragView);
     }
 
 }

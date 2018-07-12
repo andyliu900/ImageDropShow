@@ -38,7 +38,8 @@
     <FrameLayout
         android:id="@+id/dragItemViewGroup"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent">
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -53,7 +54,7 @@
             <FrameLayout
                 android:id="@+id/addimage_btn"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
                 android:background="@mipmap/icon_addimage_bg"
                 android:layout_marginTop="10dp">

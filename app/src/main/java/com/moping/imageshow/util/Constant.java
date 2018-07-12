@@ -20,5 +20,11 @@ public class Constant {
 
     // SharedPreferences
     public static final String PICKIMAGE_TIPS_KEY = "pickimage_tips_key";
+    public static final String FOLDER_ONE_KEY = "folder_one_key";
+    public static final String FOLDER_TWO_KEY = "folder_two_key";
+    public static final String FOLDER_THREE_KEY = "folder_three_key";
+    public static final String FOLDER_FOUR_KEY = "folder_four_key";
+    public static final String FOLDER_FIVE_KEY = "folder_five_key";
+    public static final String FOLDER_SIX_KEY = "folder_six_key";
 
 }
