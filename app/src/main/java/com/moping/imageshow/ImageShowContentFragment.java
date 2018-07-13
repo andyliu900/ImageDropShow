@@ -17,7 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -172,7 +171,6 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                     public void clamLeftTop(View captureView, int left, int top) {
                         leftX = left;
                         topY = top;
-                        Log.i("XXX", "leftX:" + leftX + "   topY:" + topY);
                         deleteLayout.setVisibility(View.VISIBLE);
 
                         if (isMiddlePointInCycle(captureView)) {
@@ -187,12 +185,13 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                     }
 
                     @Override
-                    public void released(View releasedChild, float totalAngle, ResetCallBack callBack) {
+                    public void released(View releasedChild, float totalAngle, float scale, ResetCallBack callBack) {
                         deleteLayout.setVisibility(View.GONE);
 
                         if (releasedChild instanceof DispatchImageView) {
                             DispatchImageView captureImageView = (DispatchImageView) releasedChild;
                             captureImageView.setRotate(totalAngle, callBack);
+                            captureImageView.setScale(scale);
                         }
 
                         if (deleteLayout != null && isMiddlePointInCycle(releasedChild)) {

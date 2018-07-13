@@ -24,7 +24,10 @@ public class RightStrategy implements Strategy {
         int parentWidth = ((ViewGroup)dispatchImageView.getParent()).getWidth();
 
         int fullCycleCount = (int)dispatchImageView.mTotalAngle / 360;
+        float scale = dispatchImageView.mScale;
 
+        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(dispatchImageView, "scaleX", scale, 1f);
+        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(dispatchImageView, "scaleY", scale, 1f);
         ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(dispatchImageView, "rotation", dispatchImageView.mTotalAngle - fullCycleCount * 360, -90);
         ValueAnimator leftAnimator = ValueAnimator.ofInt(leftMargin, parentWidth - height + ScreenUtil.dp2px(dispatchImageView.getContext(), 30) - Math.abs((height - width) / 2));
         leftAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -46,7 +49,7 @@ public class RightStrategy implements Strategy {
         });
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(rotationAnimator, leftAnimator, topAnimator);
+        animatorSet.playTogether(scaleXAnimator, scaleYAnimator, rotationAnimator, leftAnimator, topAnimator);
         animatorSet.setDuration(800);
         animatorSet.start();
     }

@@ -28,7 +28,11 @@ public class DispatchImageView extends RelativeLayout implements View.OnClickLis
     private ImageView iconRight;
     private ImageView iconUp;
     private ImageView iconDown;
+    public float mScale = 1f;
     public float mTotalAngle = 0.0f;
+
+    // true：是原ImageView，可以进行分发操作    false：不是原ImageView，不能进行分发操作
+    private boolean isOriginalImageView = false;
 
     private ImageDraggingListener.ResetCallBack mCallBack;
 
@@ -59,6 +63,10 @@ public class DispatchImageView extends RelativeLayout implements View.OnClickLis
         iconDown = (ImageView)container.findViewById(R.id.iconDown);
 
         addView(container);
+    }
+
+    public void setIsOriginalImageView(boolean flag) {
+        isOriginalImageView = flag;
     }
 
     public void setImageLayoutParams(RelativeLayout.LayoutParams layoutParams) {
@@ -97,6 +105,10 @@ public class DispatchImageView extends RelativeLayout implements View.OnClickLis
         mTotalAngle = totalAngle;
     }
 
+    public void setScale(float scale) {
+        mScale = scale;
+    }
+
     private void showArrowAnimation() {
         float leftX = iconLeft.getTranslationX();
         ObjectAnimator animatorLeft = ObjectAnimator.ofFloat(iconLeft, "translationX", leftX, 20, leftX);
@@ -133,24 +145,36 @@ public class DispatchImageView extends RelativeLayout implements View.OnClickLis
         switch (view.getId()) {
             case R.id.icon_left_layout:
                 strategyContext.setStrategy(new LeftStrategy());
+                if (mCallBack != null) {
+                    mCallBack.resetTotalAngle(90);
+                    mCallBack.resetScale();
+                }
                 break;
             case R.id.icon_right_layout:
                 strategyContext.setStrategy(new RightStrategy());
+                if (mCallBack != null) {
+                    mCallBack.resetTotalAngle(-90);
+                    mCallBack.resetScale();
+                }
                 break;
             case R.id.icon_up_layout:
                 strategyContext.setStrategy(new TopStrategy());
+                if (mCallBack != null) {
+                    mCallBack.resetTotalAngle(180);
+                    mCallBack.resetScale();
+                }
                 break;
             case R.id.icon_down_layout:
                 strategyContext.setStrategy(new BottomStrategy());
+                if (mCallBack != null) {
+                    mCallBack.resetTotalAngle(0);
+                    mCallBack.resetScale();
+                }
                 break;
                 default:
         }
         strategyContext.setDispatchImageView(this);
 
         setViewInFront(false);
-
-        if (mCallBack != null) {
-            mCallBack.resetTotalAngle();
-        }
     }
 }

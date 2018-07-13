@@ -17,7 +17,7 @@ import com.moping.imageshow.view.dispatchview.DispatchImageView;
 public class ImageTouchListener implements View.OnTouchListener {
 
     private ImageDraggingListener mImageDraggingListener;
-    float scalediff;
+    float scalediff = 1f;
     private static final int NONE = 0;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
@@ -139,10 +139,15 @@ public class ImageTouchListener implements View.OnTouchListener {
                     break;
                 case MotionEvent.ACTION_UP:
                     if (mImageDraggingListener != null) {
-                        mImageDraggingListener.released(currentDispatchImageView, totalAngle, new ImageDraggingListener.ResetCallBack() {
+                        mImageDraggingListener.released(currentDispatchImageView, totalAngle, scalediff, new ImageDraggingListener.ResetCallBack() {
                             @Override
-                            public void resetTotalAngle() {
-                                totalAngle = 0.0f;
+                            public void resetTotalAngle(float resetAngle) {
+                                totalAngle = resetAngle;
+                            }
+
+                            @Override
+                            public void resetScale() {
+                                scalediff = 1f;
                             }
                         });
                     }
