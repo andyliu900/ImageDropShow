@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -167,7 +166,6 @@ public class DispatchImageView extends ZoomImageView implements View.OnClickList
         lp.height = originLayoutParams.height - arrowWidth * 2;
         lp.setMargins(originLayoutParams.leftMargin + arrowWidth, originLayoutParams.topMargin + arrowWidth, 0, 0);
         zoomImageView.setLayoutParams(lp);
-        zoomImageView.setBackgroundColor(Color.BLUE);
         ((FrameLayout)this.getParent()).addView(zoomImageView);
 
         StrategyContext strategyContext = new StrategyContext();
