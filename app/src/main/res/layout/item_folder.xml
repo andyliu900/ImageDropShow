@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <ImageButton
+        android:id="@+id/folder_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"/>
+
+    <com.moping.imageshow.view.RotateTextView
+        android:id="@+id/folder_tv"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="-15dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="@color/exit_text"
+        android:textSize="12sp" />
+</FrameLayout>

@@ -7,9 +7,12 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 
 import com.moping.imageshow.MainActivity;
+import com.moping.imageshow.entity.MessageEvent;
 import com.moping.imageshow.func.FunctionManager;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class BaseDialogFragment extends DialogFragment {
 
@@ -53,5 +56,10 @@ public class BaseDialogFragment extends DialogFragment {
         if(EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleMessageEvent(MessageEvent messageEvent) {
+
     }
 }

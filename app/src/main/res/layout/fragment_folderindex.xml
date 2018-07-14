@@ -4,170 +4,18 @@
     android:layout_height="match_parent"
     android:background="@color/menu_bg">
 
-    <LinearLayout
-        android:id="@+id/folderList"
-        android:orientation="vertical"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/folder_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageButton
-                android:id="@+id/folder_one"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:src="@mipmap/folder_one" />
-
-            <com.moping.imageshow.view.RotateTextView
-                android:id="@+id/folder_one_tv"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="-15dp"
-                android:gravity="center"
-                android:text="文件夹1"
-                android:textColor="@color/exit_text"
-                android:textSize="12sp" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            <ImageButton
-                android:id="@+id/folder_two"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@mipmap/folder_two"
-                android:background="@android:color/transparent"/>
-
-            <com.moping.imageshow.view.RotateTextView
-                android:id="@+id/folder_two_tv"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="-15dp"
-                android:gravity="center"
-                android:text="文件夹2"
-                android:textColor="@color/exit_text"
-                android:textSize="12sp" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            <ImageButton
-                android:id="@+id/folder_three"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@mipmap/folder_three"
-                android:background="@android:color/transparent"/>
-
-            <com.moping.imageshow.view.RotateTextView
-                android:id="@+id/folder_three_tv"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="-15dp"
-                android:gravity="center"
-                android:text="文件夹3"
-                android:textColor="@color/exit_text"
-                android:textSize="12sp" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            <ImageButton
-                android:id="@+id/folder_four"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@mipmap/folder_four"
-                android:background="@android:color/transparent"/>
-
-            <com.moping.imageshow.view.RotateTextView
-                android:id="@+id/folder_four_tv"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="-15dp"
-                android:gravity="center"
-                android:text="文件夹4"
-                android:textColor="@color/exit_text"
-                android:textSize="12sp" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            <ImageButton
-                android:id="@+id/folder_five"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@mipmap/folder_five"
-                android:background="@android:color/transparent"/>
-
-            <com.moping.imageshow.view.RotateTextView
-                android:id="@+id/folder_five_tv"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="-15dp"
-                android:gravity="center"
-                android:text="文件夹5"
-                android:textColor="@color/exit_text"
-                android:textSize="12sp" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            <ImageButton
-                android:id="@+id/folder_six"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@mipmap/folder_six"
-                android:background="@android:color/transparent"/>
-
-            <com.moping.imageshow.view.RotateTextView
-                android:id="@+id/folder_six_tv"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="-15dp"
-                android:gravity="center"
-                android:text="文件夹6"
-                android:textColor="@color/exit_text"
-                android:textSize="12sp" />
-        </FrameLayout>
-
-    </LinearLayout>
+        android:layout_above="@id/action_layout"/>
 
     <LinearLayout
+        android:id="@+id/action_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:layout_alignBottom="@id/folderList"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
 
