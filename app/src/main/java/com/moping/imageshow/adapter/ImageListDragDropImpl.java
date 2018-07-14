@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
@@ -15,16 +14,16 @@ import android.widget.RelativeLayout;
 import com.moping.imageshow.util.ScreenUtil;
 import com.moping.imageshow.view.dispatchview.DispatchImageView;
 
-public class ImageListDragDropListener implements View.OnDragListener {
+public class ImageListDragDropImpl implements View.OnDragListener {
 
     private Context mContext;
     private OnDragEndCallback mOnDragEndCallback;
 
-    public ImageListDragDropListener(Context context) {
+    public ImageListDragDropImpl(Context context) {
         this.mContext = context;
     }
 
-    public ImageListDragDropListener(Context context, OnDragEndCallback callback) {
+    public ImageListDragDropImpl(Context context, OnDragEndCallback callback) {
         this.mContext = context;
         this.mOnDragEndCallback = callback;
     }
@@ -73,8 +72,10 @@ public class ImageListDragDropListener implements View.OnDragListener {
                     RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(imageMarginParams);
                     dispatchImageView.setImageLayoutParams(imageLayoutParams);
 
-                    Bitmap bitmap = BitmapFactory.decodeFile(dragData);
-                    dispatchImageView.setImage(bitmap);
+//                    Bitmap bitmap = BitmapFactory.decodeFile(dragData);
+                    Bitmap bitmap = ScreenUtil.decodeSampleBitmapFromFile(dragData,
+                            ScreenUtil.getScreenWidth(mContext) / 4);
+                    dispatchImageView.setImageView(bitmap);
 
                     ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(
                             resultWH[0] + ScreenUtil.dp2px(mContext, 30),
@@ -83,6 +84,7 @@ public class ImageListDragDropListener implements View.OnDragListener {
 
                     FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(marginParams);
                     dispatchImageView.setLayoutParams(layoutParams);
+                    dispatchImageView.setIsOriginalImageView(true);
 
                     ((FrameLayout)v).addView(dispatchImageView);
 

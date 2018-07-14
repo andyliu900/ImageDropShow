@@ -25,15 +25,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.moping.imageshow.adapter.ImageDraggingListener;
-import com.moping.imageshow.adapter.ImageListDragDropListener;
+import com.moping.imageshow.adapter.ImageListDragDropImpl;
 import com.moping.imageshow.adapter.ImagePullOutListener;
 import com.moping.imageshow.adapter.ImageShowAdapter;
-import com.moping.imageshow.adapter.ImageTouchListener;
 import com.moping.imageshow.base.BaseFragment;
+import com.moping.imageshow.entity.MessageEvent;
 import com.moping.imageshow.util.Constant;
 import com.moping.imageshow.util.FileUtil;
 import com.moping.imageshow.util.ScreenUtil;
 import com.moping.imageshow.util.SharedPreferencesUtils;
+import com.moping.imageshow.view.ZoomImageView;
 import com.moping.imageshow.view.dispatchview.DispatchImageView;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -62,8 +63,8 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
     private ImageShowAdapter adapter;
     private List<Uri> mSelected;
 
-    private DispatchImageView currentCapturedView;
-    private List<DispatchImageView> attachedImageViews = new ArrayList();
+    private ZoomImageView currentCapturedView;
+    private List<ZoomImageView> attachedImageViews = new ArrayList();
 
     enum ToggleState {
         OPENED, // 已经打开面板
@@ -117,7 +118,7 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                     adapter.notifyDataSetChanged();
 
                     ImageView selectImageView = (ImageView) view;
-                    selectImageView.setOnDragListener(new ImageListDragDropListener(mContext));
+                    selectImageView.setOnDragListener(new ImageListDragDropImpl(mContext));
 
                     ClipData.Item item = new ClipData.Item(view.getTag().toString());
                     ClipData dragData = new ClipData(view.getTag().toString(), new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN}, item);
@@ -146,11 +147,11 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
             }
         });
 
-        dragItemViewGroup.setOnDragListener(new ImageListDragDropListener(mContext, new ImageListDragDropListener.OnDragEndCallback() {
+        dragItemViewGroup.setOnDragListener(new ImageListDragDropImpl(mContext, new ImageListDragDropImpl.OnDragEndCallback() {
 
             @Override
             public void dragEnd(DispatchImageView dragView) {
-                dragView.setOnTouchListener(new ImageTouchListener(new ImageDraggingListener() {
+                dragView.setImageDraggingListener(new ImageDraggingListener() {
                     @Override
                     public void viewCaptured(View captureView) {
                         if (captureView instanceof DispatchImageView) {
@@ -162,7 +163,7 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                                 attachedImageViews.add(attachedImageViews.size(), currentCapturedView);
 
                                 dragItemViewGroup.removeAllViews();
-                                genAttacthedImageViews(false);
+                                genAttacthedImageViews();
                             }
                         }
                     }
@@ -199,11 +200,11 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
                             dragItemViewGroup.removeView(releasedChild);
                         }
                     }
-                }));
+                });
 
                 currentCapturedView = dragView;
                 attachedImageViews.add(dragView);
-                genAttacthedImageViews(true);
+                genAttacthedImageViews();
             }
         }));
 
@@ -483,24 +484,11 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
         return false;
     }
 
-    private void genAttacthedImageViews(boolean isDrop) {
+    private void genAttacthedImageViews() {
         if (attachedImageViews != null) {
-            for (DispatchImageView imageView : attachedImageViews) {
-                if (isDrop) {
-                    if (imageView.equals(currentCapturedView)) {
-                        imageView.setViewInFront(true);
-                    } else {
-                        imageView.setViewInFront(false);
-                    }
-                } else {
-                    if (imageView.getParent() == null && dragItemViewGroup != null) {
-                        if (imageView.equals(currentCapturedView)) {
-                            imageView.setViewInFront(true);
-                        } else {
-                            imageView.setViewInFront(false);
-                        }
-                        dragItemViewGroup.addView(imageView);
-                    }
+            for (ZoomImageView imageView : attachedImageViews) {
+                if (imageView.getParent() == null && dragItemViewGroup != null) {
+                    dragItemViewGroup.addView(imageView);
                 }
             }
         }
@@ -533,6 +521,62 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
             }
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void handleMessageEvent(MessageEvent messageEvent) {
+        super.handleMessageEvent(messageEvent);
+        Object param = messageEvent.getT();
+        if (param instanceof ZoomImageView) {
+            ZoomImageView zoomImageView = (ZoomImageView)param;
+            attachedImageViews.add(zoomImageView);
+            genAttacthedImageViews();
+
+            zoomImageView.setImageDraggingListener(new ImageDraggingListener() {
+                @Override
+                public void viewCaptured(View captureView) {
+                    if (captureView instanceof ZoomImageView) {
+                        ZoomImageView captureImageView = (ZoomImageView)captureView;
+                        if (currentCapturedView == null || !currentCapturedView.equals(captureImageView)) {
+                            currentCapturedView = captureImageView;
+
+                            attachedImageViews.remove(captureImageView);
+                            attachedImageViews.add(attachedImageViews.size(), currentCapturedView);
+
+                            dragItemViewGroup.removeAllViews();
+                            genAttacthedImageViews();
+                        }
+                    }
+                }
+
+                @Override
+                public void clamLeftTop(View captureView, int left, int top) {
+                    leftX = left;
+                    topY = top;
+                    deleteLayout.setVisibility(View.VISIBLE);
+
+                    if (isMiddlePointInCycle(captureView)) {
+                        Vibrator vibrator = (Vibrator)mContext.getSystemService(mContext.VIBRATOR_SERVICE);
+                        if (vibratorCount == 0) {
+                            vibrator.vibrate(100);
+                            vibratorCount++;
+                        }
+                    } else {
+                        vibratorCount = 0;
+                    }
+                }
+
+                @Override
+                public void released(View releasedChild, float totalAngle, float scale, ResetCallBack callBack) {
+                    deleteLayout.setVisibility(View.GONE);
+
+                    if (deleteLayout != null && isMiddlePointInCycle(releasedChild)) {
+                        attachedImageViews.remove(releasedChild);
+                        dragItemViewGroup.removeView(releasedChild);
+                    }
+                }
+            });
         }
     }
 }

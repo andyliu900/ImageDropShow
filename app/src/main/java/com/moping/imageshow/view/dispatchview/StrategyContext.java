@@ -1,5 +1,7 @@
 package com.moping.imageshow.view.dispatchview;
 
+import com.moping.imageshow.view.ZoomImageView;
+
 /**
  * 策略Context类
  *
@@ -14,9 +16,9 @@ public class StrategyContext {
         this.strategy = strategy;
     }
 
-    public void setDispatchImageView(DispatchImageView dispatchImageView) {
+    public void setDispatchImageView(ZoomImageView dispatchImageView, float totalAngle, float scale) {
         if (strategy != null) {
-            strategy.setDispatchAction(dispatchImageView);
+            strategy.setDispatchAction(dispatchImageView, totalAngle, scale);
         }
     }
 

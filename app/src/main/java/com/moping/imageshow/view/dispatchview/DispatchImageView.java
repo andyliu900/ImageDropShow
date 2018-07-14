@@ -4,20 +4,24 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.moping.imageshow.R;
 import com.moping.imageshow.adapter.ImageDraggingListener;
+import com.moping.imageshow.util.ScreenUtil;
+import com.moping.imageshow.view.ZoomImageView;
 
 /**
  * 带分发功能，内嵌ImageView的视图
  *
  */
-public class DispatchImageView extends RelativeLayout implements View.OnClickListener {
+public class DispatchImageView extends ZoomImageView implements View.OnClickListener, Cloneable {
 
     private ImageView image;
     private View icon_left_layout;
@@ -75,8 +79,8 @@ public class DispatchImageView extends RelativeLayout implements View.OnClickLis
         }
     }
 
-    public void setViewInFront(boolean flag) {
-        if (flag) {
+    public void setViewInFront() {
+        if (isOriginalImageView) {
             iconLeft.setVisibility(View.VISIBLE);
             iconRight.setVisibility(View.VISIBLE);
             iconUp.setVisibility(View.VISIBLE);
@@ -89,11 +93,18 @@ public class DispatchImageView extends RelativeLayout implements View.OnClickLis
         }
     }
 
-    public ImageView getImage() {
+    @Override
+    public void setImageDraggingListener(ImageDraggingListener listener) {
+        super.setImageDraggingListener(listener);
+    }
+
+    @Override
+    public ImageView getImageView() {
         return image;
     }
 
-    public void setImage(Bitmap bitmap) {
+    @Override
+    public void setImageView(Bitmap bitmap) {
         if (image != null) {
             image.setImageBitmap(bitmap);
             showArrowAnimation();
@@ -141,40 +152,57 @@ public class DispatchImageView extends RelativeLayout implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
+        // 新生成分发的DispatchImageView
+        ZoomImageView zoomImageView = new ZoomImageView(getContext());
+        image.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(image.getDrawingCache());
+        image.setDrawingCacheEnabled(false);
+        zoomImageView.setImageView(bitmap);
+
+        int arrowWidth = ScreenUtil.dp2px(getContext(), 30);
+        FrameLayout.LayoutParams originLayoutParams = (FrameLayout.LayoutParams)getLayoutParams();
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(originLayoutParams);
+
+        lp.width = originLayoutParams.width - arrowWidth * 2;
+        lp.height = originLayoutParams.height - arrowWidth * 2;
+        lp.setMargins(originLayoutParams.leftMargin + arrowWidth, originLayoutParams.topMargin + arrowWidth, 0, 0);
+        zoomImageView.setLayoutParams(lp);
+        zoomImageView.setBackgroundColor(Color.BLUE);
+        ((FrameLayout)this.getParent()).addView(zoomImageView);
+
         StrategyContext strategyContext = new StrategyContext();
         switch (view.getId()) {
             case R.id.icon_left_layout:
                 strategyContext.setStrategy(new LeftStrategy());
-                if (mCallBack != null) {
-                    mCallBack.resetTotalAngle(90);
-                    mCallBack.resetScale();
-                }
+//                if (mCallBack != null) {
+//                    mCallBack.resetTotalAngle(90);
+//                    mCallBack.resetScale();
+//                }
                 break;
             case R.id.icon_right_layout:
                 strategyContext.setStrategy(new RightStrategy());
-                if (mCallBack != null) {
-                    mCallBack.resetTotalAngle(-90);
-                    mCallBack.resetScale();
-                }
+//                if (mCallBack != null) {
+//                    mCallBack.resetTotalAngle(-90);
+//                    mCallBack.resetScale();
+//                }
                 break;
             case R.id.icon_up_layout:
                 strategyContext.setStrategy(new TopStrategy());
-                if (mCallBack != null) {
-                    mCallBack.resetTotalAngle(180);
-                    mCallBack.resetScale();
-                }
+//                if (mCallBack != null) {
+//                    mCallBack.resetTotalAngle(180);
+//                    mCallBack.resetScale();
+//                }
                 break;
             case R.id.icon_down_layout:
                 strategyContext.setStrategy(new BottomStrategy());
-                if (mCallBack != null) {
-                    mCallBack.resetTotalAngle(0);
-                    mCallBack.resetScale();
-                }
+//                if (mCallBack != null) {
+//                    mCallBack.resetTotalAngle(0);
+//                    mCallBack.resetScale();
+//                }
                 break;
                 default:
         }
-        strategyContext.setDispatchImageView(this);
-
-        setViewInFront(false);
+        strategyContext.setDispatchImageView(zoomImageView, mTotalAngle, mScale);
     }
+
 }

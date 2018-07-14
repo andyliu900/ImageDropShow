@@ -1,22 +1,26 @@
-package com.moping.imageshow.adapter;
+package com.moping.imageshow.view;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
-import com.moping.imageshow.view.dispatchview.DispatchImageView;
+import com.moping.imageshow.R;
+import com.moping.imageshow.adapter.ImageDraggingListener;
 
-/**
- * 顺时针旋转为正方向
- *
- * 图片的Touch事件，只处理缩放、旋转
- */
-public class ImageTouchListener implements View.OnTouchListener {
+public class ZoomImageView extends RelativeLayout implements View.OnTouchListener {
 
     private ImageDraggingListener mImageDraggingListener;
+
+    private ImageView image;
     float scalediff = 1f;
     private static final int NONE = 0;
     private static final int DRAG = 1;
@@ -33,26 +37,48 @@ public class ImageTouchListener implements View.OnTouchListener {
     float dx = 0, dy = 0, x = 0, y = 0;
     float angle = 0;
     float totalAngle = 0.0f;
-
-    public ImageTouchListener() {
-
+    
+    public ZoomImageView(Context context) {
+        this(context, null);
     }
 
-    public ImageTouchListener(ImageDraggingListener listener) {
+    public ZoomImageView(Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public ZoomImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        View container = LayoutInflater.from(getContext()).inflate(R.layout.zoom_container, null);
+        image = (ImageView)container.findViewById(R.id.image);
+        addView(container);
+        setOnTouchListener(this);
+    }
+
+    public ImageView getImageView() {
+        return image;
+    }
+
+    public void setImageView(Bitmap bitmap) {
+        if (image != null) {
+            image.setImageBitmap(bitmap);
+        }
+    }
+
+    public void setImageDraggingListener(ImageDraggingListener listener) {
         mImageDraggingListener = listener;
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-
-        if (v instanceof DispatchImageView) {
-            DispatchImageView currentDispatchImageView = (DispatchImageView)v;
-            ImageView currentImageView = currentDispatchImageView.getImage();
+    public boolean onTouch(View view, MotionEvent event) {
+        if (view instanceof ZoomImageView) {
+            ZoomImageView zoomImageView = (ZoomImageView)view;
+            ImageView currentImageView = zoomImageView.getImageView();
             ((BitmapDrawable)currentImageView.getDrawable()).setAntiAlias(true);
 
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
-                    parms = (FrameLayout.LayoutParams) currentDispatchImageView.getLayoutParams();
+                    parms = (FrameLayout.LayoutParams) zoomImageView.getLayoutParams();
                     startwidth = parms.width;
                     startheight = parms.height;
                     dx = event.getRawX() - parms.leftMargin;
@@ -61,7 +87,7 @@ public class ImageTouchListener implements View.OnTouchListener {
                     mode = DRAG;
 
                     if (mImageDraggingListener != null) {
-                        mImageDraggingListener.viewCaptured(currentDispatchImageView);
+                        mImageDraggingListener.viewCaptured(zoomImageView);
                     }
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
@@ -89,10 +115,10 @@ public class ImageTouchListener implements View.OnTouchListener {
                         parms.rightMargin = parms.leftMargin + (5 * parms.width);
                         parms.bottomMargin = parms.topMargin + (10 * parms.height);
 
-                        currentDispatchImageView.setLayoutParams(parms);
+                        zoomImageView.setLayoutParams(parms);
 
                         if (mImageDraggingListener != null) {
-                            mImageDraggingListener.clamLeftTop(currentDispatchImageView, (int) (x - dx), (int) (y - dy));
+                            mImageDraggingListener.clamLeftTop(zoomImageView, (int) (x - dx), (int) (y - dy));
                         }
 
                     } else if (mode == ZOOM) {
@@ -108,15 +134,15 @@ public class ImageTouchListener implements View.OnTouchListener {
 
                             float newDist = spacing(event);
                             if (newDist > 10f) {
-                                float scale = newDist / oldDist * currentDispatchImageView.getScaleX();
+                                float scale = newDist / oldDist * zoomImageView.getScaleX();
                                 if (scale > 0.6) {
                                     scalediff = scale;
-                                    currentDispatchImageView.setScaleX(scale);
-                                    currentDispatchImageView.setScaleY(scale);
+                                    zoomImageView.setScaleX(scale);
+                                    zoomImageView.setScaleY(scale);
                                 }
                             }
 
-                            currentDispatchImageView.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
+                            zoomImageView.animate().rotationBy(angle).setDuration(0).setInterpolator(new LinearInterpolator()).start();
 
                             x = event.getRawX();
                             y = event.getRawY();
@@ -129,17 +155,17 @@ public class ImageTouchListener implements View.OnTouchListener {
                             parms.rightMargin = parms.leftMargin + (5 * parms.width);
                             parms.bottomMargin = parms.topMargin + (10 * parms.height);
 
-                            currentDispatchImageView.setLayoutParams(parms);
+                            zoomImageView.setLayoutParams(parms);
 
                             if (mImageDraggingListener != null) {
-                                mImageDraggingListener.clamLeftTop(currentDispatchImageView, (int) (x - dx), (int) (y - dy));
+                                mImageDraggingListener.clamLeftTop(zoomImageView, (int) (x - dx), (int) (y - dy));
                             }
                         }
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                     if (mImageDraggingListener != null) {
-                        mImageDraggingListener.released(currentDispatchImageView, totalAngle, scalediff, new ImageDraggingListener.ResetCallBack() {
+                        mImageDraggingListener.released(zoomImageView, totalAngle, scalediff, new ImageDraggingListener.ResetCallBack() {
                             @Override
                             public void resetTotalAngle(float resetAngle) {
                                 totalAngle = resetAngle;
@@ -152,7 +178,7 @@ public class ImageTouchListener implements View.OnTouchListener {
                         });
                     }
                     break;
-                    default:
+                default:
             }
             return true;
         } else {
@@ -172,5 +198,4 @@ public class ImageTouchListener implements View.OnTouchListener {
         double radians = Math.atan2(delta_y, delta_x);
         return (float) Math.toDegrees(radians);
     }
-
 }
