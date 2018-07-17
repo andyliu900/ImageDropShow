@@ -9,9 +9,11 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 
 /**
@@ -86,6 +88,34 @@ public class FileUtil {
             cursor.close();
         }
         return filePath;
+    }
+
+    /**
+     * 文件复制方法   从assets文件夹中读取文件复制到指定路径
+     * @param inputStream  源文件输入流
+     * @param target   目标文件路径
+     */
+    public static synchronized void copyFile(InputStream inputStream, String target) {
+        if (inputStream == null) {
+            return;
+        }
+        if (target == null) {
+            return;
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(new File(target));
+            byte[] buffer = new byte[1024];
+            int byteCount=0;
+            while((byteCount = inputStream.read(buffer))!=-1) {//循环从输入流读取 buffer字节
+                fos.write(buffer, 0, byteCount);//将读取的输入流写入到输出流
+            }
+            fos.flush();//刷新缓冲区
+            inputStream.close();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

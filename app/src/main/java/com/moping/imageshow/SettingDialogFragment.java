@@ -88,45 +88,28 @@ public class SettingDialogFragment extends BaseDialogFragment implements View.On
     }
 
     private void init() {
-        String folderName1 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_ONE_KEY, "文件夹1");
+        String folderName1 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_ONE_KEY, "金币");
         folder_one_tv.setText(folderName1);
 
-        String folderName2 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_TWO_KEY, "文件夹2");
+        String folderName2 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_TWO_KEY, "黄金");
         folder_two_tv.setText(folderName2);
 
-        String folderName3 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_THREE_KEY, "文件夹3");
+        String folderName3 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_THREE_KEY, "钻石");
         folder_three_tv.setText(folderName3);
 
-        String folderName4 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_FOUR_KEY, "文件夹4");
+        String folderName4 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_FOUR_KEY, "汽车");
         folder_four_tv.setText(folderName4);
 
-        String folderName5 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_FIVE_KEY, "文件夹5");
+        String folderName5 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_FIVE_KEY, "包包");
         folder_five_tv.setText(folderName5);
 
-        String folderName6 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_SIX_KEY, "文件夹6");
+        String folderName6 = (String)SharedPreferencesUtils.getParam(getContext(), Constant.FOLDER_SIX_KEY, "理财产品");
         folder_six_tv.setText(folderName6);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-//            case R.id.folder_one_et:
-//            case R.id.folder_two_et:
-//            case R.id.folder_three_et:
-//            case R.id.folder_four_et:
-//            case R.id.folder_five_et:
-//            case R.id.folder_six_et:
-//
-//                folder_one_et.setBackgroundResource(R.drawable.table_right_bg);
-//                folder_two_et.setBackgroundResource(R.drawable.table_right_bg);
-//                folder_three_et.setBackgroundResource(R.drawable.table_right_bg);
-//                folder_four_et.setBackgroundResource(R.drawable.table_right_bg);
-//                folder_five_et.setBackgroundResource(R.drawable.table_right_bg);
-//                folder_six_et.setBackgroundResource(R.drawable.table_right_bg);
-//
-//                view.setBackgroundResource(R.drawable.table_highline_bg);
-//
-//                break;
             case R.id.savebtn:
                 String folderName1 = folder_one_et.getText().toString();
                 if (!TextUtils.isEmpty(folderName1)) {
