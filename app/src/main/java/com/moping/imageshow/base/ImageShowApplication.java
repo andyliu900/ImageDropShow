@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.moping.imageshow.util.Constant;
 import com.moping.imageshow.util.FileUtil;
+import com.moping.imageshow.util.SharedPreferencesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,8 @@ public class ImageShowApplication extends Application {
         initImageFolders();
 
         initImages();
+
+        setUsageTime();
 
         Log.i("Time", "end:" + System.currentTimeMillis());
     }
@@ -120,4 +123,15 @@ public class ImageShowApplication extends Application {
             }
         }).start();
     }
+
+    private void setUsageTime() {
+        long startTime = (Long)SharedPreferencesUtils.getParam(this, Constant.USAGE_TIME_START_KEY, 0L);
+        if (startTime <= 0) {
+            SharedPreferencesUtils.setParam(this, Constant.USAGE_TIME_START_KEY, System.currentTimeMillis());
+        }
+
+        SharedPreferencesUtils.setParam(this, Constant.USAGE_TIME_CURRENT_KEY, System.currentTimeMillis());
+
+    }
+
 }

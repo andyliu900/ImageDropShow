@@ -18,7 +18,15 @@ public class Constant {
 
     public static final String IMAGE_FOLDER_SIX = "/folder_six";
 
+    // 文件管理器包名
+    public static final String FILE_MANAGER_PACKAGENAME = "com.kangdexin.kdxfilemanager";
+
     // SharedPreferences
+    public static final String MOPIN_BRAND = "mopin";
+    public static final String USAGE_TIME_START_KEY = "usage_time_start_key";
+    public static final String USAGE_TIME_CURRENT_KEY = "usage_time_current_key";
+    public static final String USAGE_FLAG_KEY = "usage_flag_key";
+
     public static final String PICKIMAGE_TIPS_KEY = "pickimage_tips_key";
     public static final String FOLDER_ONE_KEY = "folder_one_key";
     public static final String FOLDER_TWO_KEY = "folder_two_key";

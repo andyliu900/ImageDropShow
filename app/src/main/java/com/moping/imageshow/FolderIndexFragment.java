@@ -13,6 +13,7 @@ import com.moping.imageshow.adapter.FolderAdapter;
 import com.moping.imageshow.base.BaseFragment;
 import com.moping.imageshow.util.Constant;
 import com.moping.imageshow.util.SharedPreferencesUtils;
+import com.moping.imageshow.view.CustomItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class FolderIndexFragment extends BaseFragment implements View.OnClickLis
 
         folder_list = (RecyclerView) view.findViewById(R.id.folder_list);
         folder_list.setLayoutManager(new LinearLayoutManager(mContext));
+        folder_list.addItemDecoration(new CustomItemDecoration(20));
         adapter = new FolderAdapter();
         adapter.setOnFolderClickListener(new FolderAdapter.OnFolderClickListener() {
             @Override

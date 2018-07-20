@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.moping.imageshow.base.BaseDialogFragment;
@@ -17,6 +18,10 @@ import com.moping.imageshow.base.BaseFragment;
 import com.moping.imageshow.func.FunctionManager;
 import com.moping.imageshow.func.FunctionNoParamNoResult;
 import com.moping.imageshow.func.FunctionWithParamOnly;
+import com.moping.imageshow.util.Constant;
+import com.moping.imageshow.util.DeviceInfoManager;
+import com.moping.imageshow.util.SharedPreferencesUtils;
+import com.moping.imageshow.util.TimeUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         ft.add(R.id.imageShowContentFragment, imageShowContentFragment, "ImageShowContentFragment");
 
         ft.commit();
+
+        checkCanUseByUsageTime();
     }
 
     @Override
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 添加接口并实现接口中的方法回调
+     *
      * @param tag
      */
     public void setFunctionsForFragment(String tag) {
@@ -65,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         FunctionManager functionManager = FunctionManager.getInstance();
         Fragment baseFragment = fm.findFragmentByTag(tag);
         if (baseFragment instanceof BaseFragment) {
-            BaseFragment fragment = (BaseFragment)baseFragment;
+            BaseFragment fragment = (BaseFragment) baseFragment;
             fragment.setFunctionManager(functionManager.addFunction(new FunctionWithParamOnly<Integer>(FolderIndexFragment.FUNCTION_NAME_GETPICLIST) {
                 @Override
                 public void function(Integer integer) {
@@ -93,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }));
         } else if (baseFragment instanceof BaseDialogFragment) {
-            BaseDialogFragment fragment = (BaseDialogFragment)baseFragment;
+            BaseDialogFragment fragment = (BaseDialogFragment) baseFragment;
             fragment.setFunctionManager(functionManager.addFunction(new FunctionNoParamNoResult(SettingDialogFragment.FUNCTION_SAVEFOLDERNAME_EXIT) {
                 @Override
                 public void function() {
@@ -137,5 +145,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         builder.create().show();
+    }
+
+    private void checkCanUseByUsageTime() {
+        if (!Constant.MOPIN_BRAND.equals(DeviceInfoManager.getInstance(this).getDeviceBrand())) {
+            long startTime = (Long) SharedPreferencesUtils.getParam(this, Constant.USAGE_TIME_START_KEY, 0L);
+            long endTime = (Long) SharedPreferencesUtils.getParam(this, Constant.USAGE_TIME_CURRENT_KEY, System.currentTimeMillis());
+            Log.i("XXX", "startTime:" + startTime + "    endTime:" + endTime + "  hours:" + TimeUtil.differentHoursByMillisecond(startTime, endTime));
+            if (TimeUtil.differentHoursByMillisecond(startTime, endTime) >= 2) {
+                VerifyDialogFragment verifyDialogFragment = new VerifyDialogFragment();
+                verifyDialogFragment.setCancelable(false);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                verifyDialogFragment.show(ft, "verifyDialogFragment");
+            }
+        }
     }
 }

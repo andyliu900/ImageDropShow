@@ -78,12 +78,16 @@ public class ImageShowAdapter extends RecyclerView.Adapter<ImageShowAdapter.View
                         float absX = Math.abs(dx - x);
                         float absY = Math.abs(dy - y);
 
-                        if (absY == 0 || (absX / absY) >= 1) {
-                            if (mListener != null) {
-                                mListener.onImagePullOut(position, view);
-                            }
-                        } else {
+                        if (absX == 0 || absY == 0) {
                             return false;
+                        } else {
+                            if ((absX / absY) >= 1.732) {
+                                if (mListener != null) {
+                                    mListener.onImagePullOut(position, view);
+                                }
+                            } else {
+                                return false;
+                            }
                         }
                         break;
                 }

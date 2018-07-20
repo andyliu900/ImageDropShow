@@ -5,7 +5,7 @@ import android.animation.ValueAnimator;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,20 +31,14 @@ import com.moping.imageshow.adapter.ImageShowAdapter;
 import com.moping.imageshow.base.BaseFragment;
 import com.moping.imageshow.entity.MessageEvent;
 import com.moping.imageshow.util.Constant;
-import com.moping.imageshow.util.FileUtil;
 import com.moping.imageshow.util.ScreenUtil;
 import com.moping.imageshow.util.SharedPreferencesUtils;
 import com.moping.imageshow.view.ZoomImageView;
 import com.moping.imageshow.view.dispatchview.DispatchImageView;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.GlideEngine;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
 
 public class ImageShowContentFragment extends BaseFragment implements View.OnClickListener {
 
@@ -97,16 +91,24 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
         addimage_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Matisse.from(ImageShowContentFragment.this)
-                        .choose(MimeType.ofImage()) // 选择 mime 的类型
-                        .countable(true)
-                        .maxSelectable(9) // 图片选择的最多数量
-                        .theme(R.style.Matisse_Dracula)
-//                        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                        .thumbnailScale(0.85f) // 缩略图的比例
-                        .imageEngine(new GlideEngine()) // 使用的图片加载引擎
-                        .forResult(REQUEST_CODE_CHOOSE); // 设置作为标记的请求码
+                PackageManager packageManager = mContext.getPackageManager();
+                Intent intent = packageManager.getLaunchIntentForPackage(Constant.FILE_MANAGER_PACKAGENAME);
+                if (intent == null) {
+                    Snackbar.make(dragItemViewGroup, "文件管理器不存在", Snackbar.LENGTH_LONG).show();
+                } else {
+                    startActivity(intent);
+                }
+
+//                Matisse.from(ImageShowContentFragment.this)
+//                        .choose(MimeType.ofImage()) // 选择 mime 的类型
+//                        .countable(true)
+//                        .maxSelectable(9) // 图片选择的最多数量
+//                        .theme(R.style.Matisse_Dracula)
+////                        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+//                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+//                        .thumbnailScale(0.85f) // 缩略图的比例
+//                        .imageEngine(new GlideEngine()) // 使用的图片加载引擎
+//                        .forResult(REQUEST_CODE_CHOOSE); // 设置作为标记的请求码
             }
         });
 
@@ -225,47 +227,47 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
         doActionImagePickLayout(currentFolderId);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-            mSelected = Matisse.obtainResult(data);
-
-            List<String> extendImages = new ArrayList();
-            for (Uri uri : mSelected) {
-                String path = FileUtil.getRealPathFromUri(mContext, uri);
-                extendImages.add(path);
-            }
-
-            imagePathList.addAll(extendImages);
-            adapter.setImageRes(imagePathList);
-            adapter.notifyDataSetChanged();
-
-            // 将图片复制到指定文件夹
-            for (String path : extendImages) {
-                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
-                String folderPath = null;
-                String target = null;
-                if (currentFolderId == 1) {
-                    folderPath = imagePath + Constant.IMAGE_FOLDER_ONE;
-                } else if (currentFolderId == 2) {
-                    folderPath = imagePath + Constant.IMAGE_FOLDER_TWO;
-                } else if (currentFolderId == 3) {
-                    folderPath = imagePath + Constant.IMAGE_FOLDER_THREE;
-                } else if (currentFolderId == 4) {
-                    folderPath = imagePath + Constant.IMAGE_FOLDER_FOUR;
-                } else if (currentFolderId == 5) {
-                    folderPath = imagePath + Constant.IMAGE_FOLDER_FIVE;
-                } else if (currentFolderId == 6) {
-                    folderPath = imagePath + Constant.IMAGE_FOLDER_SIX;
-                } else {
-                    folderPath = imagePath + Constant.IMAGE_FOLDER_ONE;
-                }
-                target = folderPath + File.separator + fileName;
-                FileUtil.copyFile(path, target);
-            }
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+//            mSelected = Matisse.obtainResult(data);
+//
+//            List<String> extendImages = new ArrayList();
+//            for (Uri uri : mSelected) {
+//                String path = FileUtil.getRealPathFromUri(mContext, uri);
+//                extendImages.add(path);
+//            }
+//
+//            imagePathList.addAll(extendImages);
+//            adapter.setImageRes(imagePathList);
+//            adapter.notifyDataSetChanged();
+//
+//            // 将图片复制到指定文件夹
+//            for (String path : extendImages) {
+//                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+//                String folderPath = null;
+//                String target = null;
+//                if (currentFolderId == 1) {
+//                    folderPath = imagePath + Constant.IMAGE_FOLDER_ONE;
+//                } else if (currentFolderId == 2) {
+//                    folderPath = imagePath + Constant.IMAGE_FOLDER_TWO;
+//                } else if (currentFolderId == 3) {
+//                    folderPath = imagePath + Constant.IMAGE_FOLDER_THREE;
+//                } else if (currentFolderId == 4) {
+//                    folderPath = imagePath + Constant.IMAGE_FOLDER_FOUR;
+//                } else if (currentFolderId == 5) {
+//                    folderPath = imagePath + Constant.IMAGE_FOLDER_FIVE;
+//                } else if (currentFolderId == 6) {
+//                    folderPath = imagePath + Constant.IMAGE_FOLDER_SIX;
+//                } else {
+//                    folderPath = imagePath + Constant.IMAGE_FOLDER_ONE;
+//                }
+//                target = folderPath + File.separator + fileName;
+//                FileUtil.copyFile(path, target);
+//            }
+//        }
+//    }
 
     public void initCurrentFolderId(int folderId) {
         currentFolderId = folderId;

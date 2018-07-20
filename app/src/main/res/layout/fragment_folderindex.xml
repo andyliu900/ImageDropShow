@@ -4,11 +4,16 @@
     android:layout_height="match_parent"
     android:background="@color/menu_bg">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/folder_list"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/action_layout"/>
+        android:layout_above="@id/action_layout">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/folder_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/action_layout"
@@ -22,7 +27,7 @@
         <ImageButton
             android:id="@+id/setting_img"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="80dp"
             android:src="@drawable/setting_bg"
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"/>
@@ -35,7 +40,7 @@
         <ImageButton
             android:id="@+id/exit_img"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="80dp"
             android:src="@drawable/exit_bg"
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"/>
