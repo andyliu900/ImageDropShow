@@ -3,7 +3,10 @@ package com.moping.imageshow.view.dispatchview;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
+import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.moping.imageshow.entity.MessageEvent;
@@ -22,17 +25,11 @@ public class LeftStrategy implements Strategy {
         FrameLayout.LayoutParams currentLayoutParams = (FrameLayout.LayoutParams) dispatchImageView.getLayoutParams();
         int leftMargin = currentLayoutParams.leftMargin;
         int topMargin = currentLayoutParams.topMargin;
-        int height = currentLayoutParams.height;
-        int width = currentLayoutParams.width;
+        final int height = currentLayoutParams.height;
+        final int width = currentLayoutParams.width;
 
         int fullCycleCount = (int)totalAngle / 360;
         float mScale = scale;
-
-        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(dispatchImageView, "scaleX", mScale, 1f);
-        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(dispatchImageView, "scaleY", mScale, 1f);
-        ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(dispatchImageView, "rotation", totalAngle - fullCycleCount * 360, 90);
-        dispatchImageView.setPivotX(width / 2);
-        dispatchImageView.setPivotY(height / 2);
 
         int realendLeftMargin = 0;
         if (height > width) { // 竖直方向矩形
@@ -42,6 +39,59 @@ public class LeftStrategy implements Strategy {
         } else {  // 正方形
             realendLeftMargin = 0;
         }
+
+//        ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(dispatchImageView, "scaleX", mScale, 1f);
+//        ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(dispatchImageView, "scaleY", mScale, 1f);
+//        ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(dispatchImageView, "rotation", totalAngle - fullCycleCount * 360, 90);
+//
+//        dispatchImageView.setPivotX(width / 2);
+//        dispatchImageView.setPivotY(height / 2);
+//
+//        int realendLeftMargin = 0;
+//        if (height > width) { // 竖直方向矩形
+//            realendLeftMargin = Math.abs(height - width) / 2;
+//        } else if (height < width) { // 横方向矩形
+//            realendLeftMargin = - Math.abs(height - width) / 2;
+//        } else {  // 正方形
+//            realendLeftMargin = 0;
+//        }
+//        ObjectAnimator translationXAnimator = ObjectAnimator.ofFloat(dispatchImageView, "translationX", leftMargin, realendLeftMargin);
+//        ObjectAnimator translationYAnimator = ObjectAnimator.ofFloat(dispatchImageView, "translationY", topMargin,
+//                (ScreenUtil.getScreenHeight(dispatchImageView.getContext()) - height) / 2);
+
+//        ValueAnimator leftAnimator = ValueAnimator.ofInt(leftMargin, realendLeftMargin);
+//        leftAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                int currentValue = (Integer) valueAnimator.getAnimatedValue();
+//                ((FrameLayout.LayoutParams) dispatchImageView.getLayoutParams()).leftMargin = currentValue;
+//                dispatchImageView.setLayoutParams(dispatchImageView.getLayoutParams());
+//            }
+//        });
+//        ValueAnimator topAnimator = ValueAnimator.ofInt(topMargin, (ScreenUtil.getScreenHeight(dispatchImageView.getContext()) - height) / 2);
+//        topAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                int currentValue = (Integer) valueAnimator.getAnimatedValue();
+//                ((FrameLayout.LayoutParams) dispatchImageView.getLayoutParams()).topMargin = currentValue;
+//                dispatchImageView.setLayoutParams(dispatchImageView.getLayoutParams());
+//            }
+//        });
+
+        float deltaY = topMargin - (ScreenUtil.getScreenHeight(dispatchImageView.getContext()) - height) / 2;
+
+        PropertyValuesHolder scaleXHolder = PropertyValuesHolder.ofFloat("scaleX", mScale, 1f);
+        PropertyValuesHolder scaleYHolder = PropertyValuesHolder.ofFloat("scaleY", mScale, 1f);
+        PropertyValuesHolder rotationHolder = PropertyValuesHolder.ofFloat("rotation", totalAngle - fullCycleCount * 360, 90);
+//        PropertyValuesHolder translationXHolder = PropertyValuesHolder.ofFloat("translationX", 0, - leftMargin + realendLeftMargin);
+//        PropertyValuesHolder translationYHolder = PropertyValuesHolder.ofFloat("translationY", 0,
+//                - deltaY);
+
+        dispatchImageView.setPivotX(width / 2);
+        dispatchImageView.setPivotY(height / 2);
+
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(dispatchImageView, scaleXHolder, scaleYHolder,
+                rotationHolder);
 
         ValueAnimator leftAnimator = ValueAnimator.ofInt(leftMargin, realendLeftMargin);
         leftAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -62,8 +112,13 @@ public class LeftStrategy implements Strategy {
             }
         });
 
+        dispatchImageView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+        final long startTime = System.currentTimeMillis();
+        Log.i("XXX", "start:" + startTime);
+
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(scaleXAnimator, scaleYAnimator, rotationAnimator, leftAnimator, topAnimator);
+        animatorSet.playTogether(animator, leftAnimator, topAnimator);
         animatorSet.setDuration(800);
         animatorSet.addListener(new Animator.AnimatorListener() {
             @Override
@@ -73,6 +128,11 @@ public class LeftStrategy implements Strategy {
 
             @Override
             public void onAnimationEnd(Animator animator) {
+                dispatchImageView.setLayerType(View.LAYER_TYPE_NONE, null);
+
+                long endTime = System.currentTimeMillis();
+                Log.i("XXX", "end:" + endTime + "  delta:" + (endTime - startTime));
+
                 EventBus.getDefault().post(new MessageEvent(dispatchImageView));
             }
 
@@ -87,7 +147,6 @@ public class LeftStrategy implements Strategy {
             }
         });
         animatorSet.start();
-
     }
 
 }

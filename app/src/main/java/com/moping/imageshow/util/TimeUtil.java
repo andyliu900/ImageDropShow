@@ -26,4 +26,16 @@ public class TimeUtil {
         return hours;
     }
 
+    /**
+     * 计算两个时间差，换算成差额分钟数
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public static int differentMinutesByMillisecond(long startTime, long endTime) {
+        int minutes = (int)((endTime - startTime) / (1000 * 60));
+        return minutes;
+    }
+
 }

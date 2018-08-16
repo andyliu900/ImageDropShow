@@ -8,18 +8,12 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="试用时间已结束，请联系客服继续使用"
-            android:textSize="22sp"
-            android:textColor="@color/header_tv"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="试用时间已结束，请联系魔屏厂家或代理商"
+        android:textSize="22sp"
+        android:textColor="@color/header_tv"
+        android:layout_centerVertical="true"/>
 
 </LinearLayout>

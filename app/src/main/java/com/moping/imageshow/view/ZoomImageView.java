@@ -37,7 +37,7 @@ public class ZoomImageView extends RelativeLayout implements View.OnTouchListene
     float dx = 0, dy = 0, x = 0, y = 0;
     float angle = 0;
     float totalAngle = 0.0f;
-    
+
     public ZoomImageView(Context context) {
         this(context, null);
     }
@@ -198,4 +198,5 @@ public class ZoomImageView extends RelativeLayout implements View.OnTouchListene
         double radians = Math.atan2(delta_y, delta_x);
         return (float) Math.toDegrees(radians);
     }
+
 }

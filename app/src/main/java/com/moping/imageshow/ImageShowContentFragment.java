@@ -51,7 +51,8 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
     private View addimage_btn;
     private View indecator;
 //    private DragHelperItemViewGroup dragItemViewGroup;
-        private FrameLayout dragItemViewGroup;
+    private ImageView watermark_img;
+    private FrameLayout dragItemViewGroup;
     private View deleteLayout;
 
     private ImageShowAdapter adapter;
@@ -139,6 +140,7 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
         indecator = view.findViewById(R.id.indecator);
         indecator.setOnClickListener(this);
 
+        watermark_img = (ImageView)view.findViewById(R.id.watermark_img);
         dragItemViewGroup = (FrameLayout) view.findViewById(R.id.dragItemViewGroup);
         dragItemViewGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,6 +213,12 @@ public class ImageShowContentFragment extends BaseFragment implements View.OnCli
         }));
 
         deleteLayout = view.findViewById(R.id.delete_layout);
+
+//        if (!Constant.MOPIN_BRAND.equals(DeviceInfoManager.getInstance(mContext).getDeviceBrand())) {
+//            watermark_img.setVisibility(View.VISIBLE);
+//        } else {
+//            watermark_img.setVisibility(View.GONE);
+//        }
 
         return view;
     }

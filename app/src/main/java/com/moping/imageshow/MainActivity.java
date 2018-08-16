@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.moping.imageshow.base.BaseDialogFragment;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         ft.commit();
 
-        checkCanUseByUsageTime();
+//        checkCanUseByUsageTime();
     }
 
     @Override
@@ -151,8 +150,8 @@ public class MainActivity extends AppCompatActivity {
         if (!Constant.MOPIN_BRAND.equals(DeviceInfoManager.getInstance(this).getDeviceBrand())) {
             long startTime = (Long) SharedPreferencesUtils.getParam(this, Constant.USAGE_TIME_START_KEY, 0L);
             long endTime = (Long) SharedPreferencesUtils.getParam(this, Constant.USAGE_TIME_CURRENT_KEY, System.currentTimeMillis());
-            Log.i("XXX", "startTime:" + startTime + "    endTime:" + endTime + "  hours:" + TimeUtil.differentHoursByMillisecond(startTime, endTime));
-            if (TimeUtil.differentHoursByMillisecond(startTime, endTime) >= 2) {
+//            Log.i("XXX", "startTime:" + startTime + "    endTime:" + endTime + "  minutes:" + TimeUtil.differentMinutesByMillisecond(startTime, endTime));
+            if (TimeUtil.differentMinutesByMillisecond(startTime, endTime) >= 20) {
                 VerifyDialogFragment verifyDialogFragment = new VerifyDialogFragment();
                 verifyDialogFragment.setCancelable(false);
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
