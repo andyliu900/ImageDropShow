@@ -70,7 +70,7 @@ public class ImageListDragDropImpl implements View.OnDragListener {
                             ScreenUtil.dp2px(mContext, 30), ScreenUtil.dp2px(mContext, 30));
 
                     RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(imageMarginParams);
-                    dispatchImageView.setImageLayoutParams(imageLayoutParams);
+                    dispatchImageView.setImageContainerLayoutParams(imageLayoutParams);
 
 //                    Bitmap bitmap = BitmapFactory.decodeFile(dragData);
                     Bitmap bitmap = ScreenUtil.decodeSampleBitmapFromFile(dragData,

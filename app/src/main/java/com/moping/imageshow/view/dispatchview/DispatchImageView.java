@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import com.moping.imageshow.R;
 import com.moping.imageshow.adapter.ImageDraggingListener;
 import com.moping.imageshow.util.ScreenUtil;
+import com.moping.imageshow.view.ShadowBackground;
 import com.moping.imageshow.view.ZoomImageView;
 
 /**
@@ -22,6 +24,7 @@ import com.moping.imageshow.view.ZoomImageView;
  */
 public class DispatchImageView extends ZoomImageView implements View.OnClickListener, Cloneable {
 
+    private RelativeLayout image_container;
     private ImageView image;
     private View icon_left_layout;
     private View icon_right_layout;
@@ -51,6 +54,7 @@ public class DispatchImageView extends ZoomImageView implements View.OnClickList
         super(context, attrs, defStyle);
 
         View container = LayoutInflater.from(getContext()).inflate(R.layout.dispatch_container, null);
+        image_container = (RelativeLayout)container.findViewById(R.id.image_container);
         image = (ImageView)container.findViewById(R.id.image);
         icon_left_layout = container.findViewById(R.id.icon_left_layout);
         icon_right_layout = container.findViewById(R.id.icon_right_layout);
@@ -72,9 +76,9 @@ public class DispatchImageView extends ZoomImageView implements View.OnClickList
         isOriginalImageView = flag;
     }
 
-    public void setImageLayoutParams(RelativeLayout.LayoutParams layoutParams) {
-        if (image != null) {
-            image.setLayoutParams(layoutParams);
+    public void setImageContainerLayoutParams(RelativeLayout.LayoutParams layoutParams) {
+        if (image_container != null) {
+            image_container.setLayoutParams(layoutParams);
         }
     }
 
@@ -105,7 +109,9 @@ public class DispatchImageView extends ZoomImageView implements View.OnClickList
     @Override
     public void setImageView(Bitmap bitmap) {
         if (image != null) {
-            image.setImageBitmap(bitmap);
+            image.setImageBitmap(ScreenUtil.getRoundedCornerBitmap(bitmap, ScreenUtil.dp2px(getContext(), 25)));
+            ShadowBackground.setShadowBackground(image_container, Color.parseColor("#4d000000"),
+                    ScreenUtil.dp2px(getContext(), 20));
             showArrowAnimation();
         }
     }

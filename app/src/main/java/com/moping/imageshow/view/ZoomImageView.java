@@ -20,6 +20,7 @@ public class ZoomImageView extends RelativeLayout implements View.OnTouchListene
 
     private ImageDraggingListener mImageDraggingListener;
 
+    private RelativeLayout zoomimage_container;
     private ImageView image;
     float scalediff = 1f;
     private static final int NONE = 0;
@@ -50,6 +51,7 @@ public class ZoomImageView extends RelativeLayout implements View.OnTouchListene
         super(context, attrs, defStyleAttr);
 
         View container = LayoutInflater.from(getContext()).inflate(R.layout.zoom_container, null);
+        zoomimage_container = (RelativeLayout)container.findViewById(R.id.zoomimage_container);
         image = (ImageView)container.findViewById(R.id.image);
         addView(container);
         setOnTouchListener(this);
@@ -62,6 +64,8 @@ public class ZoomImageView extends RelativeLayout implements View.OnTouchListene
     public void setImageView(Bitmap bitmap) {
         if (image != null) {
             image.setImageBitmap(bitmap);
+//            ShadowBackground.setShadowBackground(zoomimage_container, Color.parseColor("#4d000000"),
+//                    ScreenUtil.dp2px(getContext(), 20));
         }
     }
 
